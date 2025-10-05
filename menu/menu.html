@@ -1,234 +1,182 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/>
   <title>Menú - El Séptimo Bocado</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="menu.css">
 </head>
 <body>
-  <!-- Barra de Navegación -->
   <header class="navbar">
-    <a href="../principal/index.html" class="logo">
-      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
-    </a>
-  <nav>
-    <ul>
-      <li><a href="../principal/index.html">Inicio</a></li>
-      <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
-      <li><a href="../menu/menu.html">Menu</a></li>
-      <li><a href="../eventos/eventos.html">Eventos</a></li>
-      <li><a href="#">Inicia Sesion</a></li>
-      <li><a href="../contacto/contacto.html">Contacto</a></li>
-    </ul>
-  </nav>
-</header>
+    <a href="../principal/index.html" class="logo"><img src="../iconos/logo.png" alt="logo" style="height:70px"></a>
+    <nav>
+      <ul>
+        <li><a href="../principal/index.html">Inicio</a></li>
+        <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+        <li><a href="../menu/menu.html">Menu</a></li>
+        <li><a href="../eventos/eventos.html">Eventos</a></li>
+        <li><a href="../contacto/contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <!-- Hero del Menú -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>🍔 Bienvenido a Nuestro Menú 🍔</h1>
-      <p>Comidas inspiradas en tus películas favoritas</p>
+  <h1>Menú</h1>
+
+  <!-- BARRA: búsqueda / filtros -->
+  <div class="toolbar">
+    <input id="f_nombre" placeholder="Nombre (parcial)" type="text" />
+    <select id="f_categoria">
+      <option value="">Todas las categorías</option>
+      <option value="BEBIDA">BEBIDA</option>
+      <option value="SNACK">SNACK</option>
+      <option value="COMBO">COMBO</option>
+    </select>
+    <select id="f_activo">
+      <option value="">Todos</option>
+      <option value="true">Activos</option>
+      <option value="false">Inactivos</option>
+    </select>
+    <input id="f_precioMin" type="number" placeholder="Precio min" />
+    <input id="f_precioMax" type="number" placeholder="Precio max" />
+    <button id="btnBuscar">Buscar</button>
+    <button id="btnRefrescar">Refrescar</button>
+  </div>
+
+  <!-- FORM: Crear producto (todos obligatorios) -->
+  <h2>Crear Producto</h2>
+  <form id="crearForm">
+    <input id="nombre" type="text" placeholder="Nombre" required />
+    <input id="descripcion" type="text" placeholder="Descripción" required />
+    <select id="categoria" required>
+      <option value="">Selecciona categoría</option>
+      <option value="BEBIDA">BEBIDA</option>
+      <option value="SNACK">SNACK</option>
+      <option value="COMBO">COMBO</option>
+    </select>
+    <input id="precio" type="number" placeholder="Precio" required />
+    <input id="stock" type="number" placeholder="Stock" required />
+    <label><input id="activo" type="checkbox" checked /> Activo</label>
+    <input id="imageUrl" type="text" placeholder="URL de imagen (Google Drive: use uc?export=view&id=ID)" required />
+    <div>
+      <button type="submit">Crear</button>
+      <button type="button" id="limpiarForm">Limpiar</button>
     </div>
-  </section>
+    <div id="formMsg" style="color:red;display:none"></div>
+  </form>
 
-  <!-- Sección de Menú -->
-  <section class="menu">
-    <h2>Platos Estrella</h2>
-    <div class="peliculas">
-      <!-- Kill Bill -->
-      <div class="card">
-        <img src="../menu/comida/sushi.png" alt="Katana Sushi" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Katana Sushi Roll</h3>
-        <p>Sushi picante inspirado en Kill Bill.</p>
-        <span class="price">$40.000</span>
-      </div>
+  <!-- Tabla de productos -->
+  <h2>Productos</h2>
+  <table id="menuTable">
+    <thead>
+      <tr><th>ID</th><th>Imagen</th><th>Nombre</th><th>Descripción</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Activo</th><th>Acciones</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-      <!-- Volver al Futuro -->
-      <div class="card">
-        <img src="../menu/comida/burguer.png" alt="Hoverboard Burger" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Hoverboard Burger</h3>
-        <p>Hamburguesa futurista al estilo Volver al Futuro II.</p>
-        <span class="price">$25.000</span>
-      </div>
+  <script src="./menu.js"></script>
+  <script>
+    // UI wiring (usa las funciones del service en menu.js)
+    async function cargarUI() {
+      try {
+        const productos = await getMenuProductos();
+        renderProductos(productos);
+      } catch (e) {
+        console.error(e);
+        alert("No se pudo cargar productos. ¿Backend en http://localhost:8080 ?");
+      }
+    }
 
-      <!-- Star Wars -->
-      <div class="card">
-        <img src="../menu/comida/hotdog.png" alt="Lightsaber Hotdog" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Lightsaber Hotdog</h3>
-        <p>Perro caliente intergaláctico. Elige tu lado.</p>
-        <span class="price">$20,000</span>
-      </div>
+    function renderProductos(productos) {
+      const tbody = document.querySelector("#menuTable tbody");
+      tbody.innerHTML = "";
+      productos.forEach(p => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.id ?? ""}</td>
+          <td><img class="card-img" src="${p.imageUrl ?? ''}" alt="${p.nombre ?? ''}" onerror="this.src='../menu/comida/placeholder.png'"/></td>
+          <td>${p.nombre ?? ""}</td>
+          <td>${p.descripcion ?? ""}</td>
+          <td>${p.categoria ?? ""}</td>
+          <td>${p.precio ?? ""}</td>
+          <td>${p.stock ?? ""}</td>
+          <td>${p.activo === true ? 'Sí' : 'No'}</td>
+          <td class="actions">
+            <button onclick="onEditar('${p.id}')">Editar</button>
+            <button onclick="onEliminar('${p.id}')">Eliminar</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
 
-      <!-- Mortal Kombat II -->
-      <div class="card">
-        <img src="../menu/comida/ramen.png" alt="Fatality Ramen" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Fatality Ramen</h3>
-        <p>Un ramen intenso, con sabores que pelean entre sí hasta el último sorbo.</p>
-        <span class="price">$40.000</span>
-      </div>
+    window.onEditar = function(id) {
+      window.location.href = `edit_menu.html?id=${encodeURIComponent(id)}`;
+    };
 
-      <!-- Batman: Azteca -->
-      <div class="card">
-        <img src="../menu/comida/taco.png" alt="Taco del Murciélago Nocturno" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Taco del Murciélago Nocturno</h3>
-        <p>Un taco inspirado en los sabores prehispánicos, con el misticismo de la cultura azteca y la oscuridad de Batman.</p>
-        <span class="price">$20.000</span>
-      </div>
+    window.onEliminar = async function(id) {
+      if (!confirm("¿Eliminar producto?")) return;
+      try {
+        await deleteProducto(id);
+        await cargarUI();
+      } catch (e) {
+        console.error(e);
+        alert("Error eliminando producto");
+      }
+    };
 
-      <!-- The Social Network -->
-      <div class="card">
-        <img src="../menu/comida/fries.png" alt="Facebook Fries" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Facebook Fries</h3>
-        <p>Papas fritas para compartir, como un buen post.</p>
-        <span class="price">$14.000</span>
-      </div>
+    document.getElementById("btnRefrescar").addEventListener("click", cargarUI);
 
-      <!-- Demon Slayer -->
-      <div class="card">
-        <img src="../menu/comida/bento.png" alt="Mugen Bento" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Mugen Bento</h3>
-        <p>Un viaje de sabores japoneses en una caja.</p>
-        <span class="price">$30.000</span>
-      </div>
+    document.getElementById("btnBuscar").addEventListener("click", async () => {
+      try {
+        const nombre = document.getElementById("f_nombre").value.trim();
+        const categoria = document.getElementById("f_categoria").value;
+        const activo = document.getElementById("f_activo").value;
+        const precioMin = document.getElementById("f_precioMin").value;
+        const precioMax = document.getElementById("f_precioMax").value;
+        const productos = await buscarMenuProductos({ nombre, categoria, activo, precioMin: precioMin || undefined, precioMax: precioMax || undefined });
+        renderProductos(productos);
+      } catch (e) {
+        console.error(e);
+        alert("Error al buscar productos");
+      }
+    });
 
-     <!-- Dragon Ball Bojack Unbound -->
-      <div class="card">
-        <img src="../menu/comida/galactic.png" alt="Galactic Showdown Platter" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Galactic Showdown Platter</h3>
-        <p>Un banquete de batalla con gyozas suaves, brochetas picantes y arroz colorido que evoca la energía Saiyajin en pleno torneo intergaláctico. Explosivo en cada bocado.</p>
-        <span class="price">$38.900</span>
-      </div>
+    // Crear producto
+    document.getElementById("crearForm").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const msgEl = document.getElementById("formMsg");
+      msgEl.style.display = "none";
+      const nombre = document.getElementById("nombre").value.trim();
+      const descripcion = document.getElementById("descripcion").value.trim();
+      const categoria = document.getElementById("categoria").value;
+      const precio = Number(document.getElementById("precio").value);
+      const stock = Number(document.getElementById("stock").value);
+      const activo = document.getElementById("activo").checked;
+      const imageUrl = document.getElementById("imageUrl").value.trim();
 
-      <!-- Pulp Fiction -->
-      <div class="card">
-        <img src="../menu/comida/royale.png" alt="Royale con Queso" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Royale con Queso</h3>
-        <p>Hamburguesa gourmet de carne Angus con queso cheddar, pan brioche tostado, papas rizadas y salsa secreta de ajo y chipotle.</p>
-        <span class="price">$25.000</span>
-      </div>
-    </div>
-  </section>
+      if (!nombre || !descripcion || !categoria || isNaN(precio) || isNaN(stock) || !imageUrl) {
+        msgEl.innerText = "Completa todos los campos obligatorios.";
+        msgEl.style.display = "block";
+        return;
+      }
 
-  <!-- Postres -->
-  <section class="menu">
-    <h2>Postres y Dulces</h2>
-    <div class="peliculas">
-      <!-- Supergirl -->
-      <div class="card">
-        <img src="../menu/comida/sundae.png" alt="Super Sundae" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Super Sundae</h3>
-        <p>Helado con los colores de Supergirl.</p>
-        <span class="price">$16.000</span>
-      </div>
+      try {
+        await createProducto({ nombre, descripcion, categoria, precio, stock, activo, imageUrl });
+        document.getElementById("crearForm").reset();
+        await cargarUI();
+      } catch (e) {
+        console.error(e);
+        msgEl.innerText = "Error creando producto";
+        msgEl.style.display = "block";
+      }
+    });
 
-      <!-- Avengers -->
-      <div class="card">
-        <img src="../menu/comida/popcorn.png" alt="Infinity Popcorn" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Infinity Popcorn</h3>
-        <p>Palomitas de colores, como las gemas del infinito.</p>
-        <span class="price">$15.000</span>
-      </div>
+    document.getElementById("limpiarForm").addEventListener("click", () => {
+      document.getElementById("crearForm").reset();
+      document.getElementById("formMsg").style.display = "none";
+    });
 
-      <!-- Saw V -->
-      <div class="card">
-        <img src="../menu/comida/brownie.png" alt="Game Over Brownie" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Game Over Brownie</h3>
-        <p>Un brownie de chocolate negro en forma de cubo, bañado con salsa de frambuesa, con trocitos de chocolate blanco en forma de “piezas de rompecabezas”.</p>
-        <span class="price">$8.000</span>
-      </div>
-
-      <!-- SpiderMan: Brand New Day -->
-      <div class="card">
-        <img src="../menu/comida/cheesecake.png" alt="Red & Black Cheesecake" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Red & Black Cheesecake</h3>
-        <p>Un postre inspirado en los colores icónicos de Spider-Man y en la sensación de empezar de cero, como si cada bocado fuera una página nueva en el cómic de su vida.</p>
-        <span class="price">$16,000</span>
-      </div>
-
-         <!-- Scott Pilgrim-->
-      <div class="card">
-        <img src="../menu/comida/scott.png" alt="Extra Life Brownie" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Extra Life Brownie</h3>
-        <p>Un postre caótico y divertido, como un power-up directo de un videojuego retro. Chocolate intenso, colores neón y un toque ácido que enciende la experiencia. Cada bocado sabe a energía juvenil y pura diversión.</p>
-        <span class="price">$12.000</span>
-      </div>
-    </div>
-  </section>
-
-   <!-- Bebidas -->
-  <section class="menu">
-    <h2>Bebidas</h2>
-    <div class="peliculas">
-      <!-- Star Wars III -->
-      <div class="card">
-        <img src="../menu/comida/coctelsw.png" alt="Mustafar Lava Drink" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Mustafar Lava Drink</h3>
-        <p>Un cóctel que represente la batalla de Anakin y Obi-Wan en Mustafar, con colores que simulen la lava ardiente y la oscuridad de la caída al Lado Oscuro.</p>
-        <span class="price">$20,000</span>
-      </div>
-
-      <!-- Back To The Future 2 -->
-      <div class="card">
-        <img src="../menu/comida/hoverfizz.png" alt="HoverFizz 2015" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>HoverFizz 2015</h3>
-        <p>Una bebida chispeante, colorida y con un efecto visual que parezca sacada directamente de un Café de los 80’s.</p>
-        <span class="price">$13.000</span>
-      </div>
-
-      <!-- Kill Bill 2-->
-      <div class="card">
-        <img src="../menu/comida/five.png" alt="Five Point Palm Punch" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Five Point Palm Punch</h3>
-        <p>Un cóctel inspirado en la técnica letal de Pai Mei, con sabores orientales, un toque amargo y una presentación minimalista, como si fuera un ritual antes del combate final.</p>
-        <span class="price">$24,000</span>
-      </div>
-
-      <!-- Social Network-->
-      <div class="card">
-        <img src="../menu/comida/mark.png" alt="The Algorithm" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>The Algorithm</h3>
-        <p>Un cóctel que mezcla lo refinado de un bar universitario de élite con un aire moderno, minimalista y ligeramente amargo, como el carácter de la película. Es una bebida que parece seria, pero tiene un fondo fuerte.</p>
-        <span class="price">$20,000</span>
-      </div>
-
-         <!-- Superman-->
-      <div class="card">
-        <img src="../menu/comida/superman.png" alt="Kriptonita Fizz" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Kriptonita Fizz</h3>
-        <p>Un cóctel chispeante y radiante, que juega con lo peligroso de la kryptonita pero lo transforma en algo divertido y refrescante. Es brillante, burbujeante y con un toque tropical que equilibra fuerza y ligereza, igual que el nuevo Superman: poderoso, pero humano.</p>
-        <span class="price">$12,000</span>
-      </div>
-
-      <!-- Godfather 2-->
-      <div class="card">
-        <img src="../menu/comida/godfather.png" alt="Il Tradimento" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Il Tradimento</h3>
-        <p>Un cóctel oscuro y elegante que mezcla tradición italiana con el poder americano. Amargo, intenso y refinado, como la soledad de Michael Corleone.</p>
-        <span class="price">$28,000</span>
-      </div>
-
-    <!-- Child Play 2-->
-      <div class="card">
-        <img src="../menu/comida/childplay.png" alt="Sangre de Juguete" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Sangre de Juguete</h3>
-        <p>Bebida frutal dulce con toque sorpresa y espuma cremosa, decorada con mini cuchillo de chocolate.</p>
-        <span class="price">$15,000</span>
-      </div>
-
-      <!-- Harry Potter 1-->
-      <div class="card">
-        <img src="../menu/comida/pocion.png" alt="Poción de Inicio" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Poción de Inicio</h3>
-        <p>Chocolate caliente cremoso con crema batida, polvo de cacao brillante y mini galletas mágicas.</p>
-        <span class="price">$13,000</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
-  </footer>
+    // carga inicial
+    window.addEventListener("load", cargarUI);
+  </script>
 </body>
 </html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>Editar Producto</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>body{font-family:Arial;margin:20px}form{display:grid;gap:8px;max-width:640px}</style>
+</head>
+<body>
+  <h1>Editar Producto</h1>
+  <form id="editForm">
+    <label>ID (no editable)</label>
+    <input id="id" type="text" disabled />
+    <input id="nombre" type="text" placeholder="Nombre" required />
+    <input id="descripcion" type="text" placeholder="Descripción" required />
+    <select id="categoria" required>
+      <option value="">Selecciona categoría</option>
+      <option value="BEBIDA">BEBIDA</option>
+      <option value="SNACK">SNACK</option>
+      <option value="COMBO">COMBO</option>
+    </select>
+    <input id="precio" type="number" placeholder="Precio" required />
+    <input id="stock" type="number" placeholder="Stock" required />
+    <label><input id="activo" type="checkbox" /> Activo</label>
+    <input id="imageUrl" type="text" placeholder="URL de imagen (Drive: uc?export=view&id=ID)" required />
+    <div>
+      <button type="submit">Guardar</button>
+      <button type="button" id="cancelBtn">Cancelar</button>
+    </div>
+    <div id="msg" style="color:red;display:none"></div>
+  </form>
+
+  <script src="./menu.js"></script>
+  <script>
+    function qp(name){ return new URLSearchParams(window.location.search).get(name); }
+
+    async function loadProducto() {
+      const id = qp('id');
+      if (!id) { alert("ID no especificado"); window.location.href="menu.html"; return; }
+      try {
+        const p = await getProductoById(id);
+        document.getElementById("id").value = p.id ?? "";
+        document.getElementById("nombre").value = p.nombre ?? "";
+        document.getElementById("descripcion").value = p.descripcion ?? "";
+        document.getElementById("categoria").value = p.categoria ?? "";
+        document.getElementById("precio").value = p.precio ?? "";
+        document.getElementById("stock").value = p.stock ?? "";
+        document.getElementById("activo").checked = p.activo === true;
+        document.getElementById("imageUrl").value = p.imageUrl ?? "";
+      } catch (e) {
+        console.error(e);
+        alert("No se pudo cargar el producto");
+        window.location.href="menu.html";
+      }
+    }
+
+    document.getElementById("editForm").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const id = document.getElementById("id").value;
+      const nombre = document.getElementById("nombre").value.trim();
+      const descripcion = document.getElementById("descripcion").value.trim();
+      const categoria = document.getElementById("categoria").value;
+      const precio = Number(document.getElementById("precio").value);
+      const stock = Number(document.getElementById("stock").value);
+      const activo = document.getElementById("activo").checked;
+      const imageUrl = document.getElementById("imageUrl").value.trim();
+      const msg = document.getElementById("msg");
+      msg.style.display = "none";
+
+      if (!nombre || !descripcion || !categoria || isNaN(precio) || isNaN(stock) || !imageUrl) {
+        msg.innerText = "Completa todos los campos.";
+        msg.style.display = "block";
+        return;
+      }
+
+      try {
+        await updateProducto(id, { id, nombre, descripcion, categoria, precio, stock, activo, imageUrl });
+        window.location.href = "menu.html";
+      } catch (e) {
+        console.error(e);
+        msg.innerText = "Error actualizando producto";
+        msg.style.display = "block";
+      }
+    });
+
+    document.getElementById("cancelBtn").addEventListener("click", ()=> window.location.href="menu.html");
+
+    window.addEventListener("load", loadProducto);
+  </script>
+</body>
+</html>
