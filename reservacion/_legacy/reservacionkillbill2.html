@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservación - Kill Bill Vol. 2</title>
+  <link rel="stylesheet" href="reservacion.css">
+</head>
+<body>
+  <!-- Barra de Navegación -->
+  <header class="navbar">
+    <a href="../principal/index.html" class="logo">
+      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+    </a>
+    <nav>
+      <ul>
+        <li><a href="../principal/index.html">Inicio</a></li>
+        <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+        <li><a href="../menu/menu.html">Menú</a></li>
+        <li><a href="#">Eventos</a></li>
+        <li><a href="#">Reservas</a></li>
+        <li><a href="#">Inicia Sesión</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="reserva-main">
+    <!-- Info de la película -->
+    <section class="reserva-info">
+      <div class="reserva-poster">
+        <img src="../poster/kill-bill-2-poster.jpg" alt="Poster Kill Bill Vol. 2">
+      </div>
+      <div class="reserva-detalles">
+        <h2>Kill Bill: Volumen 2</h2>
+        <p><strong>Director:</strong> Quentin Tarantino</p>
+        <p><strong>Géneros:</strong> Acción, Crimen</p>
+        <p><strong>Duración:</strong> 2h 16m</p>
+      </div>
+    </section>
+
+    <!-- Selección de horarios -->
+    <section class="reserva-asientos">
+      <h2>Selecciona tu horario y asiento</h2>
+      <div class="reserva-horarios">
+        <h3>Selecciona un horario:</h3>
+        <div class="botones-horario">
+          <button class="btn-horario">Hoy - 22:00</button>
+          <button class="btn-horario">Mañana - 23:30</button>
+          <button class="btn-horario">Jueves - 00:40</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selección de asientos -->
+    <section class="reserva-asientos">
+      <h3>Pantalla</h3>
+      <div class="asientos-grid">
+        <div class="fila">
+          <span class="letra-fila">A</span>
+          <button class="asiento">A1</button>
+          <button class="asiento ocupado">A2</button>
+          <button class="asiento">A3</button>
+          <button class="asiento">A4</button>
+          <button class="asiento">A5</button>
+          <button class="asiento">A6</button>
+          <button class="asiento">A7</button>
+          <button class="asiento">A8</button>
+        </div>
+        <div class="fila">
+          <span class="letra-fila">B</span>
+          <button class="asiento">B1</button>
+          <button class="asiento">B2</button>
+          <button class="asiento">B3</button>
+          <button class="asiento ocupado">B4</button>
+          <button class="asiento">B5</button>
+          <button class="asiento">B6</button>
+          <button class="asiento">B7</button>
+          <button class="asiento">B8</button>
+        </div>
+        <div class="fila">
+          <span class="letra-fila">C</span>
+          <button class="asiento">C1</button>
+          <button class="asiento">C2</button>
+          <button class="asiento">C3</button>
+          <button class="asiento">C4</button>
+          <button class="asiento ocupado">C5</button>
+          <button class="asiento">C6</button>
+          <button class="asiento">C7</button>
+          <button class="asiento">C8</button>
+        </div>
+        <div class="fila">
+          <span class="letra-fila">D</span>
+          <button class="asiento">D1</button>
+          <button class="asiento">D2</button>
+          <button class="asiento">D3</button>
+          <button class="asiento">D4</button>
+          <button class="asiento">D5</button>
+          <button class="asiento">D6</button>
+          <button class="asiento ocupado">D7</button>
+          <button class="asiento">D8</button>
+        </div>
+        <div class="fila">
+          <span class="letra-fila">E</span>
+          <button class="asiento">E1</button>
+          <button class="asiento ocupado">E2</button>
+          <button class="asiento">E3</button>
+          <button class="asiento">E4</button>
+          <button class="asiento">E5</button>
+          <button class="asiento">E6</button>
+          <button class="asiento">E7</button>
+          <button class="asiento">E8</button>
+        </div>
+        <div class="fila">
+          <span class="letra-fila">F</span>
+          <button class="asiento">F1</button>
+          <button class="asiento">F2</button>
+          <button class="asiento">F3</button>
+          <button class="asiento ocupado">F4</button>
+          <button class="asiento">F5</button>
+          <button class="asiento">F6</button>
+          <button class="asiento">F7</button>
+          <button class="asiento">F8</button>
+        </div>
+      </div>
+      <div class="leyenda-asientos">
+        <span><button class="asiento ocupado"></button> Ocupado</span>
+        <span><button class="asiento seleccionado"></button> Seleccionado</span>
+        <span><button class="asiento"></button> Disponible</span>
+      </div>
+    </section>
+    
+    <!-- Pago (botones) -->
+    <section class="reserva-pago">
+      <p>Total: <strong>$8.100</strong>
+        <span class="cargo-servicio">+ Cargo por servicio $1.400</span>
+      </p>
+<div class="botones-reserva">
+  <!-- Botón cancelar -->
+  <label for="modal-cancelar" class="btn-cancelar">Cancelar</label>
+
+  <!-- Botón total dinámico -->
+  <button id="btn-total" class="btn-total" type="button">$0 COP</button>
+
+  <!-- Botón confirmar -->
+  <button class="btn-confirmar" id="btn-confirmar" type="button">Confirmar</button>
+</div>
+    </section>
+  </main>
+
+  <!-- ===== Modales (cada checkbox justo antes de su modal) ===== -->
+
+  <!-- Cancelar -->
+  <input type="checkbox" id="modal-cancelar" class="modal-toggle" hidden>
+  <div class="modal modal-cancelar">
+    <div class="modal-content">
+      <p>¿Estás seguro que deseas cancelar?</p>
+      <div class="modal-buttons">
+        <label for="modal-cancelar" class="btn-no">No</label>
+        <a href="../principal/index.html" class="btn-si">Sí</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmar -->
+  <input type="checkbox" id="modal-confirmar" class="modal-toggle" hidden>
+  <div class="modal modal-confirmar">
+    <div class="modal-content">
+      <p>¿Deseas confirmar tu reservación?</p>
+      <div class="modal-buttons">
+        <label for="modal-confirmar" class="btn-no">No</label>
+        <a href="reservacioncomida.html" class="btn-si">Sí, Confirmar</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <input type="checkbox" id="modal-error" class="modal-toggle" hidden>
+  <div class="modal modal-error">
+    <div class="modal-content">
+      <h2>⚠️ Error en la reservación</h2>
+      <p id="mensaje-error">Debes seleccionar un horario y al menos un asiento.</p>
+      <div class="modal-buttons">
+        <label for="modal-error" class="btn-no">Cerrar</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="reservacion.js"></script>
+</body>
+</html>

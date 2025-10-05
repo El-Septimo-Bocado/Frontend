@@ -1,0 +1,290 @@
+:root {
+  --color-fondo: #1e1e1e;
+  --color-navbar: #24170c;
+  --color-acento: #ff9d00;
+  --color-acento-sec: #b22222;
+  --color-texto: #ffffff;
+  --color-subtexto: #cccccc;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;               
+  padding-top: 80px; /* 👉 espacio para que no tape la navbar */
+}
+
+/* ===== Navbar fija arriba ===== */
+.navbar {
+  position: fixed;         
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-navbar);
+  padding: 15px 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.navbar .logo { 
+  font-weight: bold; 
+  font-size: 20px; 
+  color: var(--color-acento); 
+  text-decoration: none; 
+  transition: transform .3s; 
+}
+.navbar .logo:hover { transform: scale(1.1); }
+.navbar ul { list-style: none; display: flex; gap: 25px; }
+.navbar ul li a { text-decoration: none; color: var(--color-texto); font-weight: bold; transition: .3s; }
+.navbar ul li a:hover { color: var(--color-acento); }
+
+/* ===== Contenedor principal (mismo look de .reserva-main) ===== */
+.ticket, .recibo-main {
+  max-width: 1600px;
+  margin: 40px auto 0 auto;
+  background: rgba(36, 23, 12, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  padding: 70px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ===== Encabezado: póster + detalles ===== */
+.ticket-head, .recibo-pelicula {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.ticket-head img,
+#reciboPoster {
+  width: 180px;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+  object-fit: cover;
+}
+
+.ticket-title h1,
+.recibo-pelicula h2 {
+  color: var(--color-acento);
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.ticket-tags, .etiquetas {
+  display: flex;
+  gap: 12px;
+  margin: 6px 0 10px;
+}
+.tag, .etiqueta {
+  background: var(--color-acento);
+  color: var(--color-fondo);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: .95rem;
+  font-weight: bold;
+  letter-spacing: .5px;
+}
+.tag.sec, .etiqueta.genero { background: var(--color-acento-sec); color: var(--color-texto); }
+.tag.dim, .etiqueta.duracion { background: var(--color-subtexto); color: var(--color-fondo); }
+
+/* ===== Bloque de datos ===== */
+.ticket-body, .recibo-detalles, .recibo-costos {
+  background: rgba(30,30,30,0.8);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 12px;
+}
+
+.ticket-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 18px 28px;
+}
+
+.ticket-body .row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row label {
+  color: var(--color-subtexto);
+  font-size: .95rem;
+}
+
+.row .value {
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+/* Chips de asientos */
+.asientos-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.asiento-chip {
+  background: var(--color-acento);
+  color: var(--color-fondo);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: .95rem;
+}
+
+/* Total destacado */
+.total-box {
+  grid-column: 1 / -1;
+  background: rgba(36,23,12,0.85);
+  padding: 16px 18px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.total-box .label { color: var(--color-subtexto); }
+.total-box .amount { font-size: 1.2rem; font-weight: bold; }
+
+/* ===== Acciones ===== */
+.botones {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+.ticket-actions .btn,
+.botones button,
+.btn-volver {
+  background: var(--color-acento);
+  color: var(--color-fondo);
+  border: none;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .3s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+.ticket-actions .btn:hover,
+.botones button:hover,
+.btn-volver:hover {
+  background: var(--color-acento-sec);
+  color: #fff;
+}
+
+/* ===== Footer ===== */
+footer {
+  background: var(--color-navbar);
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+  color: var(--color-subtexto);
+  font-size: 14px;
+  border-radius: 0 0 18px 18px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  .ticket, .recibo-main { padding: 40px 28px; }
+}
+@media (max-width: 720px) {
+  .ticket-head, .recibo-pelicula { flex-direction: column; text-align: center; }
+  .ticket-body { grid-template-columns: 1fr; }
+  .total-box { flex-direction: column; gap: 8px; align-items: flex-start; }
+}
+
+/* =======================
+   Estilos SOLO para imprimir
+   ======================= */
+@media print {
+  @page { margin: 15mm; }
+
+  .navbar,
+  footer,
+  .botones {
+    display: none !important;
+    
+  }
+
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    padding-top: 0 !important;
+  }
+
+  .recibo-main {
+    box-shadow: none !important;
+    background: #fff !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .recibo-main h1 {
+    font-size: 20px !important;
+    margin: 0 0 10px !important;
+    color: #000 !important;
+  }
+
+  .recibo-pelicula {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 0 8px !important;
+  }
+
+  #reciboPoster {
+    width: 90px !important;
+    height: auto !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+  }
+
+  .recibo-pelicula h2 {
+    font-size: 18px !important;
+    margin: 0 0 4px !important;
+    color: #000 !important;
+  }
+
+  .recibo-detalles p,
+  .recibo-costos p {
+    margin: 2px 0 !important;
+    font-size: 12px !important;
+  }
+
+  .recibo-costos h3 {
+    margin: 8px 0 4px !important;
+    font-size: 14px !important;
+  }
+
+  .recibo-costos .total {
+    font-weight: 700;
+    font-size: 14px !important;
+  }
+
+  .recibo-pelicula,
+  .recibo-detalles,
+  .recibo-costos {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  a, a:visited {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+}

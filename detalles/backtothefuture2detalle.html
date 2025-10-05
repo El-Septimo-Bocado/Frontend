@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volver al futuro II</title>
+  <link rel="stylesheet" href="estreno.css">
+</head>
+<body>
+  <!-- Barra de Navegacion -->
+  <header class="navbar">
+  <a href="../principal/index.html" class="logo">
+    <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+  </a>
+  <nav>
+    <ul>
+      <li><a href="../principal/index.html">Inicio</a></li>
+      <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+      <li><a href="../menu/menu.html">Menu</a></li>
+      <li><a href="../eventos/eventos.html">Eventos</a></li>
+      <li><a href="#">Inicia Sesion</a></li>
+      <li><a href="../contacto/contacto.html">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+  <!-- Detalles de la Película -->
+<main class="detalle-pelicula" style="--fondo-pelicula: url('../fondos/back2.jpg');">
+  <div class="poster">
+      <img src="../poster/back-future-2-poster.jpg" alt="Poster Volver al Futuro 2">
+    </div>
+
+    <div class="info">
+      <h1>Volver al futuro II</h1>
+      <p class="genero">Acción | Aventura</p>
+      <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
+      <p class="sinopsis">
+        Tras visitar 2015, Marty McFly vuelve a 1955 para evitar los desastrosos cambios<br> de 1985... sin interferir con su primer viaje.
+      </p>
+
+      <div class="detalles">
+        <p><strong>Director:</strong> Robert Zemeckis</p>
+        <p><strong>Reparto:</strong> Michael J. Fox, Christopher Lloyd, Lea Thompson</p>
+        <p><strong>Duración:</strong> 1h 48m</p>
+      </div>
+
+      <a href="../login/login.html"
+   class="btn-reservar"
+   data-reserva="../reservacion/reservacion.html"
+   data-pelicula="Volver al Futuro II"
+   data-poster="../poster/back-future-2-poster.jpg"
+   data-fondo="../fondos/back2.jpg"
+   data-director="Robert Zemeckis"
+   data-generos="Acción, Aventura"
+   data-duracion="1h 48m">
+  🎟️ Reservar Boletos
+</a>
+    </div>
+  </main>
+
+  <!-- Horarios -->
+  <section class="horarios">
+    <h2>Horarios Disponibles</h2>
+    <div class="horarios-grid">
+      <div class="horario">Miercoles - 14:00</div>
+      <div class="horario">Viernes - 21:30</div>
+      <div class="horario">Sabado - 13:00</div>
+    </div>
+  </section>
+
+  <!-- Trailer -->
+  <iframe width="100%" height="400" 
+    src="https://www.youtube.com/embed/MdENmefJRpw" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
+
+  <!-- Reseñas -->
+  <section class="reseñas">
+    <h2>Reseñas de Usuarios</h2>
+    <div class="reseña">
+      <p><strong>wobbleup:</strong> ⭐⭐⭐⭐☆ “im really mad that they didn't name this "back 2 the future".”</p>
+    </div>
+    <div class="reseña">
+      <p><strong>ronroneo:</strong> ⭐⭐⭐⭐⭐ “La segunda parte de esta inolvidable trilogía la cual no resulta tan original ya que sigue prácticamente las mismas pautas pero sigue siendo igual de divertida y entretenida.”</p>
+    </div>
+    <div class="reseña">
+      <p><strong>Elpin:</strong> ⭐⭐⭐⭐⭐ “Creo que esta es la que más me gusta de toda la trilogía.”</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
+  </footer>
+  <script src="detalles.js"></script>
+</body>
+</html>

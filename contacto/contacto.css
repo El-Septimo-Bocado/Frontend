@@ -1,0 +1,119 @@
+/* Colores */
+:root {
+  --color-fondo: #1e1e1e;       /* Fondo gris oscuro */
+  --color-navbar: #24170c;      /* Marrón oscuro */
+  --color-acento: #ff9d00;      /* Naranja brillante */
+  --color-acento-sec: #b22222;  /* Rojo vino */
+  --color-texto: #ffffff;       /* Texto principal */
+  --color-subtexto: #cccccc;    /* Texto secundario */
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-navbar);
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar .logo img {
+  height: 70px;
+  transition: transform 0.3s;
+}
+
+.navbar .logo img:hover {
+  transform: scale(1.1);
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: var(--color-texto);
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+  color: var(--color-acento);
+}
+
+/* Sección Contacto */
+.contact-list {
+  max-width: 600px;
+  margin: 60px auto;
+  background: var(--color-navbar);
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(255, 157, 0, 0.2);
+  border-top: 6px solid var(--color-acento);
+}
+
+.contact-list h1 {
+  text-align: center;
+  color: var(--color-acento);
+  margin-bottom: 30px;
+  font-size: 2em;
+  letter-spacing: 1px;
+}
+
+.contact-person {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #333;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.contact-person:last-child {
+  border-bottom: none;
+}
+
+.contact-person h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.2em;
+  color: var(--color-acento);
+}
+
+.contact-person p {
+  margin: 4px 0;
+  font-size: 1em;
+  color: var(--color-subtexto);
+}
+
+.contact-person:hover {
+  background: rgba(255, 157, 0, 0.1);
+  transform: translateX(5px);
+  border-radius: 8px;
+}
+
+/* Footer */
+footer {
+  background: var(--color-navbar);
+  text-align: center;
+  padding: 18px 0;
+  margin-top: 40px;
+  color: var(--color-subtexto);
+  font-size: 0.9em;
+}

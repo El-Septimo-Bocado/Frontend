@@ -1,0 +1,459 @@
+/* Colores base inspirados en styles.css */
+:root {
+  --color-fondo: #1e1e1e;
+  --color-navbar: #24170c;
+  --color-acento: #ff9d00;
+  --color-acento-sec: #b22222;
+  --color-texto: #ffffff;
+  --color-subtexto: #cccccc;
+  --color-ocupado: #b22222;
+  --color-seleccionado: #ff9d00;
+  --color-disponible: #444;
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-navbar);
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-acento);
+  text-decoration: none;
+  transition: transform 0.3s;
+}
+
+.navbar .logo:hover {
+  transform: scale(1.1);
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: var(--color-texto);
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+  color: var(--color-acento);
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: var(--color-texto);
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+  color: var(--color-acento);
+}
+
+/* Main */
+.reserva-main {
+  max-width: 1600px; 
+  margin: 40px auto 0 auto;
+  background: rgba(36, 23, 12, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  padding: 70px 80px; 
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  flex: 1;
+}
+
+/* Info película */
+.reserva-info {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reserva-poster img {
+  width: 180px;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+}
+
+.reserva-detalles h2 {
+  color: var(--color-acento);
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.etiquetas {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.etiqueta {
+  background: var(--color-acento);
+  color: var(--color-fondo);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.etiqueta.genero {
+  background: var(--color-acento-sec);
+  color: var(--color-texto);
+}
+
+.etiqueta.duracion {
+  background: var(--color-subtexto);
+  color: var(--color-fondo);
+}
+
+/* Asientos */
+.reserva-asientos {
+  background: rgba(30,30,30,0.8);
+  border-radius: 12px;
+  padding: 30px 20px;
+  margin-bottom: 10px;
+}
+
+.reserva-asientos h3 {
+  text-align: center;
+  color: var(--color-acento);
+  margin-bottom: 18px;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+}
+
+.asientos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.letra-fila {
+  font-weight: bold;
+  color: var(--color-acento);
+  margin-right: 10px;
+  width: 18px;
+  text-align: right;
+}
+
+.asiento {
+  width: 38px;
+  height: 38px;
+  background: var(--color-disponible);
+  color: var(--color-texto);
+  border: none;
+  border-radius: 7px;
+  margin: 0 2px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.asiento:hover:not(.ocupado):not(.seleccionado) {
+  background: var(--color-acento);
+  color: var(--color-fondo);
+  transform: scale(1.08);
+}
+
+.asiento.ocupado {
+  background: var(--color-ocupado);
+  color: #fff;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.asiento.seleccionado {
+  background: var(--color-seleccionado);
+  color: var(--color-fondo);
+  border: 2px solid var(--color-acento-sec);
+}
+
+.leyenda-asientos {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 0.98rem;
+}
+
+.leyenda-asientos span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Pago y botones */
+.reserva-pago {
+  background: rgba(36, 23, 12, 0.85);
+  border-radius: 10px;
+  padding: 22px 18px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.reserva-pago p {
+  font-size: 1.15rem;
+  color: var(--color-texto);
+  margin-bottom: 18px;
+}
+
+.cargo-servicio {
+  color: var(--color-subtexto);
+  font-size: 0.95rem;
+  margin-left: 8px;
+}
+
+.botones-reserva {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.btn-cancelar, .btn-continuar {
+  background: var(--color-acento);
+  color: var(--color-fondo);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 7px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.btn-cancelar:hover {
+  background: var(--color-acento-sec);
+  color: var(--color-texto);
+}
+
+.btn-continuar:hover {
+  background: var(--color-acento-sec);
+  color: var(--color-acento);
+}
+
+/* Footer */
+footer {
+  background: var(--color-navbar);
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+  color: var(--color-subtexto);
+  font-size: 14px;
+  border-radius: 0 0 18px 18px;
+}
+
+/* Ocultar el checkbox */
+.modal-toggle {
+  display: none;
+}
+
+/* Modal oculto por defecto */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Mostrar modal cuando el checkbox está activado */
+.modal-toggle:checked ~ .modal {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Caja del modal */
+.modal-content {
+  background-color: var(--color-fondo);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+  max-width: 90%;
+}
+
+/* Botones dentro del modal */
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn-no, .btn-si {
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn-no {
+  background: #ccc;
+  color: #000;
+}
+
+.btn-si {
+  background: #b22222;
+  color: #fff;
+}
+
+.reserva-horarios {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.reserva-asientos h3 {
+  text-align: center;
+  color: var(--color-acento);
+  margin-bottom: 18px;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  margin-top: 32px;
+}
+
+.reserva-horarios .botones-horario {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+}
+
+.btn-horario {
+  background: var(--color-seleccionado);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 0;
+}
+
+.btn-horario:hover {
+  background: var(--color-acento-sec);
+}
+
+/* Horarios seleccionados */
+.btn-horario.seleccionado {
+  background-color: var(--color-ocupado);
+  color: var(--color-fondo);
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   SISTEMA DE BOTONES UNIFICADO (para Cancelar / Total / Confirmar)
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform .08s ease, background .25s ease, color .25s ease, border-color .25s ease;
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn:active { transform: translateY(1px); }
+
+/* Primario */
+.btn--primary {
+  background: var(--color-acento);
+  color: var(--color-fondo);
+}
+.btn--primary:hover {
+  background: var(--color-acento-sec);
+  color: #fff;
+}
+
+/* Ghost */
+.btn--ghost {
+  background: transparent;
+  color: var(--color-acento);
+  border-color: rgba(255, 157, 0, 0.65);
+}
+.btn--ghost:hover {
+  background: rgba(255, 157, 0, 0.12);
+}
+
+/* Peligro */
+.btn--danger {
+  background: var(--color-acento-sec);
+  color: #fff;
+}
+.btn--danger:hover {
+  background: #8f1b1b;
+}
+
+/* Deshabilitado */
+.btn[disabled],
+.btn.is-disabled {
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* Neutralizar estilos viejos en estos botones concretos
+   (para que adopten el sistema .btn) */
+.btn-cancelar, .btn-continuar, .btn-total {
+  background: unset !important;
+  color: unset !important;
+  border: unset !important;
+  padding: unset !important;
+}

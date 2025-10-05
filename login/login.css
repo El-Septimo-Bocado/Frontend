@@ -1,0 +1,157 @@
+:root {
+  --color-fondo: #1e1e1e;
+  --color-navbar: #24170c;
+  --color-acento: #ff9d00;
+  --color-acento-sec: #b22222;
+  --color-texto: #ffffff;
+  --color-subtexto: #cccccc;
+  --color-ocupado: #b22222;
+  --color-seleccionado: #ff9d00;
+  --color-disponible: #444;
+}
+
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-navbar);
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-acento);
+  text-decoration: none;
+  transition: transform 0.3s;
+}
+
+.navbar .logo:hover {
+  transform: scale(1.1);
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: var(--color-texto);
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+  color: var(--color-acento);
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: var(--color-texto);
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+  color: var(--color-acento);
+}
+
+/* Estilos Login */
+.login-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 40px 20px;
+}
+
+.login-container {
+  background: var(--color-navbar);
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 100%;
+  max-width: 350px;
+  border: 1px solid var(--color-acento);
+}
+
+.login-container h2 {
+  margin-bottom: 20px;
+  color: var(--color-acento);
+}
+
+.login-container input {
+  width: 90%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 6px;
+}
+
+.login-container button {
+  width: 95%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  background: var(--color-acento);
+  color: var(--color-fondo);
+  transition: background 0.3s;
+}
+
+.login-container button:hover {
+  background: var(--color-acento-sec);
+  color: var(--color-texto);
+}
+
+.login-container button.secundario {
+  background: var(--color-acento-sec);
+  color: var(--color-texto);
+}
+
+.login-container button.secundario:hover {
+  background: var(--color-fondo);
+  color: var(--color-acento);
+}
+
+/* Navbar activo */
+.navbar ul li a.activo {
+  color: var(--color-acento);
+}
+
+/* Footer */
+footer {
+  background: var(--color-navbar);
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+  color: var(--color-subtexto);
+  font-size: 14px;
+  border-radius: 0 0 18px 18px;
+}

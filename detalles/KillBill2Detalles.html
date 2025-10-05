@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kill Bill: Vol. 2</title>
+  <link rel="stylesheet" href="estreno.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+  <a href="../principal/index.html" class="logo">
+    <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+  </a>
+  <nav>
+    <ul>
+      <li><a href="../principal/index.html">Inicio</a></li>
+      <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+      <li><a href="../menu/menu.html">Menu</a></li>
+      <li><a href="../eventos/eventos.html">Eventos</a></li>
+      <li><a href="#">Inicia Sesion</a></li>
+      <li><a href="../contacto/contacto.html">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- Detalles de la Película -->
+<main class="detalle-pelicula" style="--fondo-pelicula: url('../fondos/killbill2.jpg');">
+  <div class="poster">
+    <img src="../poster/kill-bill-2-poster.jpg" alt="Poster Kill Bill Vol 2">
+  </div>
+
+    <div class="info">
+      <h1>Kill Bill: Vol. 2</h1>
+      <p class="genero">Acción | Thriller</p>
+      <p class="rating">⭐⭐⭐⭐⭐ (5/5)</p>
+      <p class="sinopsis">
+        Tras eliminar a algunos miembros de la banda que intentaron asesinarla el día de su boda,<br> "Mamba Negra" intenta acabar con los demás, especialmente con Bill, su antiguo jefe, que <br> la había dado por muerta.
+      </p>
+
+      <div class="detalles">
+        <p><strong>Director:</strong> Quentin Tarantino</p>
+        <p><strong>Reparto:</strong> Uma Thurman, David Carradine, Michael Madsen</p>
+        <p><strong>Duración:</strong> 2h 17m</p>
+      </div>
+
+      <a href="../login/login.html"
+   class="btn-reservar"
+   data-reserva="../reservacion/reservacion.html"
+   data-pelicula="Kill Bill: Vol. 2"
+   data-poster="../poster/kill-bill-2-poster.jpg"
+   data-fondo="../fondos/killbill2.jpg"
+   data-director="Quentin Tarantino"
+   data-generos="Acción, Thriller"
+   data-duracion="2h 17m">
+  🎟️ Reservar Boletos
+</a>
+
+
+  </main>
+
+  <!-- Horarios -->
+  <section class="horarios">
+    <h2>Horarios Disponibles</h2>
+    <div class="horarios-grid">
+      <div class="horario">Mañana - 18:00</div>
+      <div class="horario">Jueves - 20:30</div>
+      <div class="horario">Viernes - 22:00</div>
+    </div>
+  </section>
+
+  <!-- Trailer -->
+  <iframe width="100%" height="400" 
+    src="https://www.youtube.com/embed/WTt8cCIvGYI" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
+
+  <!-- Reseñas -->
+  <section class="reseñas">
+    <h2>Reseñas de Usuarios</h2>
+    <div class="reseña">
+      <p><strong>Lucy:</strong> ⭐⭐⭐⭐⭐ “listen..... the entire chapter "elle and i" is absolutely one of the best sequences that quantum toronto has ever MADE”</p>
+    </div>
+    <div class="reseña">
+      <p><strong>Grooveman:</strong> ⭐⭐⭐⭐⭐ “"Bitch, you don't have a future."”</p>
+    </div>
+    <div class="reseña">
+      <p><strong>Mago:</strong> ⭐⭐⭐⭐⭐ “Llore de una manera increíble en la escena en que Beatriz ve finalmente a su hija :c”</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
+  </footer>
+<script src="detalles.js"></script>
+</body>
+</html>
+
