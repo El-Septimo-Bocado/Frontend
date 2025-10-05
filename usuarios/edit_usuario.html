@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Editar Usuario</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    form { display: grid; gap: 8px; max-width:480px; }
+  </style>
+</head>
+<body>
+  <h1>Editar Usuario</h1>
+  <form id="editForm">
+    <input id="id" type="text" disabled />
+    <input id="nombre" type="text" placeholder="Nombre" required />
+    <input id="email" type="email" placeholder="Email" required />
+    <input id="edad" type="number" placeholder="Edad" required />
+    <div>
+      <button type="submit">Guardar</button>
+      <button type="button" id="cancelBtn">Cancelar</button>
+    </div>
+    <div id="msg" style="color:red; display:none;"></div>
+  </form>
+
+  <script src="./usuarios.js"></script>
+  <script>
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    async function loadUsuario() {
+      const id = getQueryParam('id');
+      if (!id) {
+        alert("ID no especificado");
+        window.location.href = "usuarios.html";
+        return;
+      }
+      try {
+        const u = await getUsuarioById(id);
+        document.getElementById("id").value = u.id ?? "";
+        document.getElementById("nombre").value = u.nombre ?? "";
+        document.getElementById("email").value = u.email ?? "";
+        document.getElementById("edad").value = u.edad ?? "";
+      } catch (err) {
+        console.error(err);
+        alert("No se pudo cargar usuario");
+        window.location.href = "usuarios.html";
+      }
+    }
+
+    document.getElementById("editForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("id").value;
+      const nombre = document.getElementById("nombre").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const edad = Number(document.getElementById("edad").value);
+      const msgEl = document.getElementById("msg");
+      msgEl.style.display = "none";
+
+      try {
+        await updateUsuario(id, { nombre, email, edad });
+        window.location.href = "usuarios.html";
+      } catch (err) {
+        console.error(err);
+        msgEl.innerText = "Error actualizando usuario";
+        msgEl.style.display = "block";
+      }
+    });
+
+    document.getElementById("cancelBtn").addEventListener("click", () => {
+      window.location.href = "usuarios.html";
+    });
+
+    window.addEventListener("load", loadUsuario);
+  </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Usuarios - El Septimo Bocado</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    .actions button { margin-right: 6px; }
+    form { margin-top: 12px; display: grid; gap: 8px; max-width: 480px; }
+    input[type="text"], input[type="number"], input[type="email"] { padding: 6px; width: 100%; box-sizing: border-box; }
+    .toolbar { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+    .error { color:red; margin-top:6px; }
+  </style>
+</head>
+<body>
+  <h1>Usuarios</h1>
+
+  <div class="toolbar">
+    <input id="searchName" placeholder="Nombre" />
+    <input id="searchEmail" placeholder="Email (opcional)" />
+    <input id="searchEdad" type="number" placeholder="Edad" style="width:110px" />
+    <button id="btnBuscar">Buscar</button>
+    <button id="btnRefrescar">Refrescar</button>
+  </div>
+
+  <table id="usuariosTable">
+    <thead>
+      <tr>
+        <th>ID</th><th>Nombre</th><th>Email</th><th>Edad</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Crear usuario</h2>
+  <form id="crearForm">
+    <input id="nombre" type="text" placeholder="Nombre" required />
+    <input id="email" type="email" placeholder="Email" required />
+    <input id="edad" type="number" placeholder="Edad" required />
+    <div>
+      <button type="submit">Crear</button>
+      <button type="button" id="limpiarForm">Limpiar</button>
+    </div>
+    <div id="formMsg" class="error" style="display:none"></div>
+  </form>
+
+  <script src="./usuarios.js"></script>
+  <script>
+    // conexión entre HTML y usuarios.js
+    async function cargarUsuariosUI() {
+      try {
+        const usuarios = await getUsuarios();
+        const tbody = document.querySelector("#usuariosTable tbody");
+        tbody.innerHTML = "";
+        usuarios.forEach(u => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${u.id ?? ""}</td>
+            <td>${u.nombre ?? ""}</td>
+            <td>${u.email ?? ""}</td>
+            <td>${u.edad ?? ""}</td>
+            <td class="actions">
+              <button onclick="onEditar('${u.id}')">Editar</button>
+              <button onclick="onEliminar('${u.id}')">Eliminar</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Error al cargar usuarios. ¿El backend está en http://localhost:8080?");
+      }
+    }
+
+    async function onEliminar(id) {
+      if (!confirm("¿Eliminar este usuario?")) return;
+      try {
+        await deleteUsuario(id);
+        await cargarUsuariosUI();
+      } catch (err) {
+        console.error(err);
+        alert("Error eliminando usuario");
+      }
+    }
+
+    function onEditar(id) {
+      // redirigir a la página de edición con query param
+      window.location.href = `edit_usuario.html?id=${encodeURIComponent(id)}`;
+    }
+
+    // búsqueda
+    document.getElementById("btnBuscar").addEventListener("click", async () => {
+      const nombre = document.getElementById("searchName").value || "";
+      const email = document.getElementById("searchEmail").value || "";
+      const edadVal = document.getElementById("searchEdad").value;
+      const edad = edadVal ? Number(edadVal) : "";
+      try {
+        const usuarios = await buscarUsuarios(nombre, email, edad);
+        const tbody = document.querySelector("#usuariosTable tbody");
+        tbody.innerHTML = "";
+        usuarios.forEach(u => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${u.id ?? ""}</td>
+            <td>${u.nombre ?? ""}</td>
+            <td>${u.email ?? ""}</td>
+            <td>${u.edad ?? ""}</td>
+            <td class="actions">
+              <button onclick="onEditar('${u.id}')">Editar</button>
+              <button onclick="onEliminar('${u.id}')">Eliminar</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Error en la búsqueda");
+      }
+    });
+
+    document.getElementById("btnRefrescar").addEventListener("click", cargarUsuariosUI);
+
+    // crear usuario
+    document.getElementById("crearForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const edad = Number(document.getElementById("edad").value);
+      const msgEl = document.getElementById("formMsg");
+      msgEl.style.display = "none";
+
+      if (!nombre || !email || !edad) {
+        msgEl.innerText = "Completa todos los campos.";
+        msgEl.style.display = "block";
+        return;
+      }
+
+      try {
+        await createUsuario({ nombre, email, edad });
+        document.getElementById("crearForm").reset();
+        await cargarUsuariosUI();
+      } catch (err) {
+        console.error(err);
+        msgEl.innerText = "Error creando usuario";
+        msgEl.style.display = "block";
+      }
+    });
+
+    document.getElementById("limpiarForm").addEventListener("click", () => {
+      document.getElementById("crearForm").reset();
+      document.getElementById("formMsg").style.display = "none";
+    });
+
+    // carga inicial
+    window.addEventListener("load", cargarUsuariosUI);
+  </script>
+</body>
+</html>
