@@ -204,3 +204,59 @@ body {
 footer {
   margin-top: auto;
 }
+
+
+/* ========== ESTILOS PANEL ADMIN ========== */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  padding: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background: #f4f4f4;
+}
+
+.card-img {
+  width: 100px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.actions button {
+  margin-right: 6px;
+}
+
+form {
+  display: grid;
+  gap: 8px;
+  max-width: 760px;
+  margin-top: 12px;
+}
