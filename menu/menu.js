@@ -7,7 +7,6 @@ const API_BASE = "http://localhost:8080/api/menu";
 function driveToViewUrl(url) {
   try {
     if (!url) return url;
-    // si ya es uc?export=view...
     if (url.includes("uc?export=view")) return url;
     const m = url.match(/\/d\/([^\/]+)\//);
     if (m && m[1]) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
