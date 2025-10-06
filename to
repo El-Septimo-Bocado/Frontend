@@ -1,0 +1,11 @@
+[33mcommit 3650a25e7988fcf8933d677e09dd2df697829eae[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31mdesarrollo/main[m[33m, [m[1;31mdesarrollo/develop[m[33m, [m[1;31mdesarrollo/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Yeliel Lopez Marin <YexDynamics@gmail.com>
+Date:   Sat Oct 4 12:03:02 2025 -0500
+
+    Agregado .diea al gitignore
+
+[33mcommit f2ae72596464b32783b03114ea1f0dce5b62d108[m
+Author: Yeliel Lopez Marin <YexDynamics@gmail.com>
+Date:   Sat Oct 4 11:59:29 2025 -0500
+
+    Primer commit
