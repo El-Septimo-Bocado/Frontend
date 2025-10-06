@@ -1,4 +1,4 @@
-package com.example.Backend.modelos;
+package com.example.Backend.ackend.modelos;
 
 import java.util.UUID;
 
@@ -7,6 +7,10 @@ public class Usuario {
     private String nombre;
     private String email;
     private int edad;
+
+    // nuevo
+    private String passwordHash; // no guardar el password plano
+    private String rol = "USER"; // USER | ADMIN
 
     public Usuario() {
         this.id = UUID.randomUUID().toString();
@@ -28,4 +32,10 @@ public class Usuario {
     public void setEmail(String email) { this.email = email; }
     public int getEdad() { return edad; }
     public void setEdad(int edad) { this.edad = edad; }
+
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 }
