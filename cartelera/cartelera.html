@@ -7,102 +7,34 @@
     <link rel="stylesheet" href="cartelera.css">
 </head>
 <body>
-    <!-- Barra de Navegacion-->
+  <!-- Barra de Navegacion-->
   <header class="navbar">
-  <a href="../principal/index.html" class="logo">
-    <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
-  </a>
-  <nav>
-    <ul>
-      <li><a href="../principal/index.html">Inicio</a></li>
-      <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
-      <li><a href="../menu/menu.html">Menu</a></li>
-      <li><a href="../eventos/eventos.html">Eventos</a></li>
-      <li><a href="#">Inicia Sesion</a></li>
-      <li><a href="../contacto/contacto.html">Contacto</a></li>
-    </ul>
-  </nav>
-</header>
+    <a href="../principal/index.html" class="logo">
+      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+    </a>
+    <nav>
+      <ul>
+        <li><a href="../principal/index.html">Inicio</a></li>
+        <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+        <li><a href="../menu/menu.html">Menu</a></li>
+        <li><a href="../eventos/eventos.html">Eventos</a></li>
+        <li><a href="#">Inicia Sesion</a></li>
+        <li><a href="../contacto/contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
   <!-- Cartelera -->
-    <div class="cartelera">
-      <h2 style="grid-column: 1 / -1; text-align: center; margin-bottom: 30px;">En cartelera y próximamente</h2>
-        <!-- Tarjeta Kill Bill Vol. 2 -->
-        <a href="../detalles/KillBill2Detalles.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/kill-bill-2-poster.jpg" alt="Kill Bill Vol. 2">
-            <h2>Kill Bill Vol. 2</h2>
-        </a>
-        <!-- Tarjeta Volver al Futuro 2 -->
-        <a href="../detalles/backtothefuture2detalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/back-future-2-poster.jpg" alt="Volver al Futuro 2">
-            <h2>Volver al Futuro 2</h2>
-        </a>
+  <div class="cartelera" id="cartelera-container">
+    <h2 style="grid-column: 1 / -1; text-align: center; margin-bottom: 30px;">En cartelera y próximamente</h2>
+    <!-- Aquí se insertarán las películas dinámicamente -->
+  </div>
 
-        <!-- Tarjeta The Social Network -->
-        <a href="../detalles/thesocialnetworkdetalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/social-network-poster.jpg" alt="The Social Network">
-            <h2>The Social Network</h2>
-        </a>
-
-        <!-- Tarjeta Star Wars Episodio III -->
-        <a href="../detalles/starwars3detalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/star-wars-3-poster.jpg" alt="Star Wars Episodio III">
-            <h2>Star Wars: Episodio III</h2>
-        </a>
-        <!-- Tarjeta Saw V -->
-        <a href="../detalles/sawvdetalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/saw-v-poster.jpg" alt="Saw V">
-            <h2>Saw V</h2>
-        </a>
-                <!-- Tarjeta Mortal Kombat II -->
-        <a href="../detalles/mortalkombat2detalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/mortal-kombat-2-poster.jpg" alt="Mortal Kombat II ">
-            <h2>Mortal Kombat II</h2>
-        </a>
-
-             <!-- Tarjeta Demon Slayer -->
-        <a href="../detalles/demonslayerdetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/demon-slayer-poster.jpg" alt="Demon Slayer The Movie: Infinity Castle ">
-            <h2>Demon Slayer: Castillo Infinito</h2>
-        </a>
-
-        <!-- Tarjeta Avengers Doomsday -->
-        <a href="../detalles/avengersdoomsdaydetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/avenger-doomsday-poster.jpg" alt="Avengers: Doomsday ">
-            <h2>Avengers: Doomsday</h2>
-        </a>
-
-        <!-- Tarjeta Batman Azteca -->
-        <a href="../detalles/batmanaztecadetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/batman-azteca-poster.jpg" alt="Batman Azteca: Choque de imperios">
-            <h2>Batman Azteca: Choque de imperios</h2>
-        </a>
-
-         <!-- Tarjeta Spiderman Brand New Day -->
-        <a href="../detalles/spiderman4detalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/spider-brand-poster.jpg" alt="Spider-Man: Brand New Day">
-            <h2>Spider-Man: Brand New Day</h2>
-        </a>
-
-           <!-- Tarjeta Supergirl -->
-        <a href="../detalles/supergirldetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/supergirl-poster.jpg" alt="Supergirl">
-            <h2>Supergirl</h2>
-        </a>
-    </div>
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
   </footer>
+
+  <script src="cartelera.js"></script>
 </body>
 </html>
