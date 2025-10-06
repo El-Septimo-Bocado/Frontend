@@ -1,4 +1,4 @@
-package com.example.Backend.ackend.modelos;
+package com.example.Backend.modelos;
 
 import java.util.UUID;
 
