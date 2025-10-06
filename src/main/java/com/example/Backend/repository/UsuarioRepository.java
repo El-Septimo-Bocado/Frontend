@@ -73,4 +73,12 @@ public class UsuarioRepository {
         }
         return null;
     }
+
+    public String saveToken(String id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object findByEmail(String email) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

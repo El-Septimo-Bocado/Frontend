@@ -28,7 +28,7 @@ public class AuthService {
     }
 
     public String login(String email, String password) {
-        Usuario u = repo.findByEmail(email);
+        Usuario u = (Usuario) repo.findByEmail(email);
         if (u == null) throw new IllegalArgumentException("USER_NOT_FOUND");
         String hash = Hashing.sha256(password);
         if (!hash.equals(u.getPasswordHash()))
