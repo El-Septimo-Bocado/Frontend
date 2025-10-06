@@ -6,6 +6,96 @@
   <title>El Séptimo Bocado</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+<script>
+(function () {
+  const API = "http://localhost:8080/api/movies";
+
+  // Normaliza nombres de campos por si cambian
+  const mapMovie = (m) => ({
+    id: m.id,
+    titulo: m.titulo || m.title || "Película",
+    // usa "coverArt" si lo agregaste; si no, cae al poster
+    imagen: m.coverArt || m.poster || "",
+    poster: m.poster || "",
+    fondo: m.fondo || "",
+    director: m.director || "",
+    generos: m.generos || "",
+    duracion: m.duracion || "",
+    rating: typeof m.rating === "number" ? m.rating : null,
+    activo: m.activo !== false,  // por defecto true si no viene
+  });
+
+  // Estrellitas: 4.5 → "⭐⭐⭐⭐☆"
+  function stars(r) {
+    if (typeof r !== "number") return "—";
+    const full = Math.floor(r);
+    const half = (r - full) >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
+  }
+
+  function cardHTML(movie) {
+    const alt = movie.titulo.replace(/"/g, "&quot;");
+    const img = movie.imagen
+      ? `<img src="${movie.imagen}" alt="${alt}" style="width:100%; border-radius:8px; margin-bottom:10px;">`
+      : `<div style="width:100%;height:180px;border-radius:8px;margin-bottom:10px;background:#eee;display:flex;align-items:center;justify-content:center;color:#666;">Sin imagen</div>`;
+
+    // Link que manda a reservación con meta en el hash (#pm=...)
+    const pm = encodeURIComponent(JSON.stringify({
+      titulo: movie.titulo,
+      poster: movie.poster || movie.imagen,
+      fondo: movie.fondo,
+      director: movie.director,
+      generos: movie.generos,
+      duracion: movie.duracion
+    }));
+
+    return `
+      <div class="card">
+        ${img}
+        <h3>${movie.titulo}</h3>
+        <p>${stars(movie.rating)}</p>
+        <a href="../reservacion/reservacion.html"#pm=${pm}">
+          
+          <button>Ver Detalles</button>
+        </a>
+      </div>
+    `;
+  }
+
+  function renderList(containerId, list) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    if (!list.length) {
+      el.innerHTML = '<p style="opacity:.7;">No hay elementos para mostrar.</p>';
+      return;
+    }
+    el.innerHTML = list.map(cardHTML).join("");
+  }
+
+  fetch(API)
+    .then(r => {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(data => {
+      const movies = Array.isArray(data) ? data.map(mapMovie) : [];
+      const enCartelera = movies.filter(m => m.activo);
+      const proximos = movies.filter(m => !m.activo);
+
+      renderList("cartelera-list", enCartelera);
+      renderList("estrenos-list", proximos);
+    })
+    .catch(err => {
+      console.error("[cartelera] error:", err);
+      const c1 = document.getElementById("cartelera-list");
+      const c2 = document.getElementById("estrenos-list");
+      if (c1) c1.innerHTML = `<p style="color:#b00020;">No pude cargar la cartelera desde ${API}</p>`;
+      if (c2) c2.innerHTML = `<p style="color:#b00020;">No pude cargar los estrenos desde ${API}</p>`;
+    });
+})();
+</script>
+
 <body>
   <!-- Barra de Navegacion -->
 <header class="navbar">
@@ -42,55 +132,10 @@
 
   <!-- Cartelera de películas actuales -->
   <section class="cartelera">
-    <h2>Cartelera</h2>
-    <div class="peliculas">
-      <!-- Tarjeta Kill Bill Vol. 2 -->
-      <div class="card">
-        <img src="../iconos/Kill-Bill-2.png" alt="Kill Bill: Vol. 2" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Kill Bill: Vol. 2</h3>
-        <p>⭐⭐⭐⭐⭐</p>
-        <a href="../detalles/KillBill2Detalles.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Volver al Futuro II -->
-      <div class="card">
-        <img src="../iconos/back-2.png" alt="Volver al Futuro 2" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Volver al futuro II</h3>
-        <p>⭐⭐⭐⭐⭐</p>
-        <a href="../detalles/backtothefuture2detalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Star Wars: Episodio III -->
-      <div class="card">
-        <img src="../iconos/star-3.png" alt="Star Wars: Episodio III" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Star Wars: Episodio III</h3>
-        <p>⭐⭐⭐⭐☆</p>
-        <a href="../detalles/starwars3detalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta The Social Network -->
-      <div class="card">
-        <img src="../iconos/social.png" alt="The Social Network" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>The Social Network</h3>
-        <p>⭐⭐⭐⭐⭐</p>
-        <a href="../detalles/thesocialnetworkdetalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Saw V -->
-      <div class="card">
-        <img src="../iconos/sawv.png" alt="Saw V" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Saw V</h3>
-        <p>⭐⭐⭐☆☆</p>
-        <a href="../detalles/sawvdetalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-    </div>
-  </section>
+  <h2>Cartelera</h2>
+  <div id="cartelera-list" class="peliculas"></div>
+</section>
+
 
   <!-- Promoción Especial -->
   <section class="promocion">
