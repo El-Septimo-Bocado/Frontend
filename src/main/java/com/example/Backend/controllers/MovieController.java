@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/movies")
 @Tag(name = "Películas", description = "API de cartelera")

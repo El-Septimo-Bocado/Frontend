@@ -1,7 +1,6 @@
 package com.example.Backend.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import com.example.Backend.modelos.Usuario;
 import org.springframework.stereotype.Repository;
@@ -9,34 +8,25 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UsuarioRepository {
     private final List<Usuario> baseDeDatos = new ArrayList<>();
-    private final List<String> authTokens = new ArrayList<>();
+    // token -> userId
+    private final Map<String, String> tokenStore = new HashMap<>();
 
     public Usuario save(Usuario usuario) {
         baseDeDatos.add(usuario);
-        authTokens.add(usuario.getId());
         return usuario;
     }
 
     public Usuario findById(String id) {
-        for (Usuario usuario : baseDeDatos) {
-            if (usuario.getId().equals(id)) {
-                return usuario;
-            }
+        for (Usuario u : baseDeDatos) {
+            if (u.getId().equals(id)) return u;
         }
         return null;
     }
 
-    public List<Usuario> findAll() {
-        return new ArrayList<>(baseDeDatos);
-    }
+    public List<Usuario> findAll() { return new ArrayList<>(baseDeDatos); }
 
     public void deleteById(String id) {
-        for (int i = 0; i < baseDeDatos.size(); i++) {
-            if (baseDeDatos.get(i).getId().equals(id)) {
-                baseDeDatos.remove(i);
-                return;
-            }
-        }
+        baseDeDatos.removeIf(u -> u.getId().equals(id));
     }
 
     public Usuario update(Usuario usuario) {
@@ -51,34 +41,36 @@ public class UsuarioRepository {
 
     public List<Usuario> buscarPorFiltros(String nombre, String email) {
         List<Usuario> resultado = new ArrayList<>();
-        for (Usuario usuario : baseDeDatos) {
-            boolean coincideNombre = (nombre == null || usuario.getNombre().contains(nombre));
-            boolean coincideEmail = (email == null || usuario.getEmail().contains(email));
-            if (coincideNombre && coincideEmail) {
-                resultado.add(usuario);
-            }
+        for (Usuario u : baseDeDatos) {
+            boolean byName  = (nombre == null || (u.getNombre() != null && u.getNombre().contains(nombre)));
+            boolean byEmail = (email  == null || (u.getEmail()  != null && u.getEmail().contains(email)));
+            if (byName && byEmail) resultado.add(u);
         }
         return resultado;
     }
 
-    public Usuario findByAuthToken(String authToken) {
-        for (String token : authTokens) {
-            if (token.equals(authToken)) {
-            	for (Usuario usuario : baseDeDatos) {
-                    if (usuario.getId().equals(token)) {
-                        return usuario;
-                    }
-                }
-            }
+    public Usuario findByEmail(String email) {
+        for (Usuario u : baseDeDatos) {
+            if (u.getEmail() != null && u.getEmail().equalsIgnoreCase(email)) return u;
         }
         return null;
     }
 
-    public String saveToken(String id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /** Genera y guarda un token nuevo para el userId, y lo devuelve */
+    public String saveToken(String userId) {
+        String token = UUID.randomUUID().toString();
+        tokenStore.put(token, userId);
+        return token;
     }
 
-    public Object findByEmail(String email) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /** Resuelve un token y devuelve el usuario asociado (o null) */
+    public Usuario findByAuthToken(String token) {
+        String userId = tokenStore.get(token);
+        return userId == null ? null : findById(userId);
+    }
+
+    // logout:
+    public void revokeToken(String token) {
+        tokenStore.remove(token);
     }
 }

@@ -21,9 +21,12 @@ public class UsuarioService {
         Usuario juan = new Usuario("Juan Pérez", "juan@example.com", 30);
         Usuario maria = new Usuario("María López", "maria@example.com", 25);
         Usuario carlos = new Usuario("Carlos Ruiz", "carlos@example.com", 40);
-        save(juan);
+        Usuario admin = new Usuario("Admin", "admin@example.com", 0);
+        admin.setRol("ADMIN");
         save(maria);
         save(carlos);
+        save(admin);
+        save(juan);
     }
 
     public Usuario save(Usuario usuario) {

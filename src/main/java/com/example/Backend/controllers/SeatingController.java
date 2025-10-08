@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@CrossOrigin(origins = "*")
+@RestController //Puente
 @RequestMapping("/api/showtimes")
 @Tag(name = "Asientos", description = "Mapa, bloqueo y liberación de asientos por función")
 class SeatingController {

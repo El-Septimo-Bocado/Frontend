@@ -124,17 +124,49 @@ public class UsuarioController {
     }
 
     @GetMapping("/auth")
-    @Operation(summary = "Obtener usuario por token", description = "Devuelve un usuario basado en su token de autorización.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
-            @ApiResponse(responseCode = "401", description = "Token inválido o no autorizado")
-    })
-    public ResponseEntity<Usuario> getUserByToken(@RequestHeader("Authorization") @Parameter(description = "Token de autorización") String authToken) {
-        Usuario usuario = usuarioService.findByAuthToken(authToken);
+    public ResponseEntity<Usuario> getUserByToken(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || authHeader.isBlank()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token = authHeader.trim();
+        if (token.toLowerCase().startsWith("bearer ")) token = token.substring(7).trim();
+
+        Usuario usuario = usuarioService.findByAuthToken(token);
         if (usuario != null) {
             return new ResponseEntity<>(usuario, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    // ====== CAMBIAR ROL DE USUARIO (ADMIN) ======
+    @PutMapping("/{id}/role")
+    @Operation(
+            summary = "Cambiar rol de usuario",
+            description = "Actualiza el rol del usuario a USER o ADMIN"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Rol actualizado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "400", description = "Rol inválido")
+    })
+    public ResponseEntity<Usuario> updateRole(
+            @PathVariable @Parameter(description = "ID del usuario") String id,
+            @RequestBody @Parameter(description = "Nuevo rol (USER o ADMIN)") RoleDto body) {
+
+        Usuario u = usuarioService.findById(id);
+        if (u == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        String newRole = (body == null || body.rol == null) ? "" : body.rol.trim().toUpperCase();
+        if (!newRole.equals("USER") && !newRole.equals("ADMIN")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        u.setRol(newRole);
+        Usuario up = usuarioService.update(u);
+        return new ResponseEntity<>(up, HttpStatus.OK);
+    }
+
+    // DTO simple para el rol
+    static class RoleDto { public String rol; }
 }

@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/showtimes")
 @Tag(name = "Funciones", description = "Horarios por película")

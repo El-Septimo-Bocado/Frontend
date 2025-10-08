@@ -1,5 +1,7 @@
 package com.example.Backend.modelos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.UUID;
 
 public class Usuario {
@@ -8,8 +10,9 @@ public class Usuario {
     private String email;
     private int edad;
 
-    // nuevo
-    private String passwordHash; // no guardar el password plano
+    @JsonIgnore                 // Nunca exponer en respuestas
+    private String passwordHash; // Hash de la contraseña
+
     private String rol = "USER"; // USER | ADMIN
 
     public Usuario() {
@@ -26,10 +29,13 @@ public class Usuario {
     // Getters y Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
     public int getEdad() { return edad; }
     public void setEdad(int edad) { this.edad = edad; }
 

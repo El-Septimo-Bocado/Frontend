@@ -23,7 +23,7 @@ public class MenuItemService {
         save(new MenuItem("Gaseosa Grande", "Bebida 22oz", "BEBIDA",
                 9000, 100, true, "https://img/gaseosa.png"));
         save(new MenuItem("Palomitas Caramelo", "Dulces, tamaño mediano", "SNACK",
-                16000, 60, true, "https://img/palomitas.png"));
+                16000, 60, true, "https://res.cloudinary.com/dxpgzf01b/image/upload/v1759688532/popcorn_rgp5or.png"));
     }
 
     public MenuItem save(MenuItem item) {
