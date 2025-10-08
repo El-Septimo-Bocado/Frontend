@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reservación - Selección de Comida</title>
-  <link rel="stylesheet" href="reservacioncomida.css">
+  <link rel="stylesheet" href="reservacioncomida.css"/>
 </head>
 <body>
-  <header class="navbar">
-    <a href="../principal/index.html" class="logo">
-      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
-    </a>
+<header class="navbar">
+  <a href="../principal/index.html" class="logo">
+    <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+  </a>
   <nav>
     <ul>
       <li><a href="../principal/index.html">Inicio</a></li>
@@ -23,245 +23,30 @@
   </nav>
 </header>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h1>🍔 Elige tu Comida 🍔</h1>
-      <p>Selecciona tus comidas favoritas para disfrutar con tu película</p>
-    </div>
-  </section>
+<section class="hero">
+  <div class="hero-content">
+    <h1>🍔 Elige tu Comida 🍔</h1>
+    <p>Selecciona tus comidas favoritas para disfrutar con tu película</p>
+  </div>
+</section>
 
 <section class="menu">
-  <h2>Platos Disponibles</h2>
-  <form id="form-comida">
-    <div class="peliculas">
-
-      <!-- Katana Sushi -->
-      <div class="card">
-        <img src="../menu/comida/sushi.png" alt="Katana Sushi">
-        <h3>Katana Sushi Roll</h3>
-        <p>Sushi picante inspirado en Kill Bill.</p>
-        <span class="price">$28.000</span>
-        <button type="button" class="btn-comprar" data-comida="Katana Sushi Roll" data-precio="28000">Comprar</button>
-      </div>
-
-      <!-- Hoverboard Burger -->
-      <div class="card">
-        <img src="../menu/comida/burguer.png" alt="Hoverboard Burger">
-        <h3>Hoverboard Burger</h3>
-        <p>Hamburguesa futurista al estilo Volver al Futuro II.</p>
-        <span class="price">$25.000</span>
-        <button type="button" class="btn-comprar" data-comida="Hoverboard Burger" data-precio="25000">Comprar</button>
-      </div>
-
-      <!-- Lightsaber Hotdog -->
-      <div class="card">
-        <img src="../menu/comida/hotdog.png" alt="Lightsaber Hotdog">
-        <h3>Lightsaber Hotdog</h3>
-        <p>Perro caliente intergaláctico. Elige tu lado.</p>
-        <span class="price">$20.000</span>
-        <button type="button" class="btn-comprar" data-comida="Lightsaber Hotdog" data-precio="20000">Comprar</button>
-      </div>
-
-      <!-- Fatality Ramen -->
-      <div class="card">
-        <img src="../menu/comida/ramen.png" alt="Fatality Ramen">
-        <h3>Fatality Ramen</h3>
-        <p>Un ramen intenso, con sabores que pelean entre sí hasta el último sorbo.</p>
-        <span class="price">$38.000</span>
-        <button type="button" class="btn-comprar" data-comida="Fatality Ramen" data-precio="38000">Comprar</button>
-      </div>
-
-      <!-- Taco del Murciélago -->
-      <div class="card">
-        <img src="../menu/comida/taco.png" alt="Taco del Murciélago Nocturno">
-        <h3>Taco del Murciélago Nocturno</h3>
-        <p>Un taco inspirado en sabores prehispánicos con la oscuridad de Batman.</p>
-        <span class="price">$20.000</span>
-        <button type="button" class="btn-comprar" data-comida="Taco del Murciélago Nocturno" data-precio="20000">Comprar</button>
-      </div>
-
-      <!-- Facebook Fries -->
-      <div class="card">
-        <img src="../menu/comida/fries.png" alt="Facebook Fries">
-        <h3>Facebook Fries</h3>
-        <p>Papas fritas para compartir, como un buen post.</p>
-        <span class="price">$12.000</span>
-        <button type="button" class="btn-comprar" data-comida="Facebook Fries" data-precio="12000">Comprar</button>
-      </div>
-
-      <!-- Mugen Bento -->
-      <div class="card">
-        <img src="../menu/comida/bento.png" alt="Mugen Bento">
-        <h3>Mugen Bento</h3>
-        <p>Un viaje de sabores japoneses en una caja.</p>
-        <span class="price">$30.000</span>
-        <button type="button" class="btn-comprar" data-comida="Mugen Bento" data-precio="30000">Comprar</button>
-      </div>
-
-      <!-- Galactic Showdown -->
-      <div class="card">
-        <img src="../menu/comida/galactic.png" alt="Galactic Showdown Platter">
-        <h3>Galactic Showdown Platter</h3>
-        <p>Un banquete de batalla Saiyajin, explosivo en cada bocado.</p>
-        <span class="price">$38.900</span>
-        <button type="button" class="btn-comprar" data-comida="Galactic Showdown Platter" data-precio="38900">Comprar</button>
-      </div>
-
-      <!-- Royale con Queso -->
-      <div class="card">
-        <img src="../menu/comida/royale.png" alt="Royale con Queso">
-        <h3>Royale con Queso</h3>
-        <p>Hamburguesa Angus con papas rizadas y salsa secreta.</p>
-        <span class="price">$25.000</span>
-        <button type="button" class="btn-comprar" data-comida="Royale con Queso" data-precio="25000">Comprar</button>
-      </div>
-    </div>
-  </form>
+  <h2>Menú</h2>
+  <div id="menu-grid" class="peliculas">
+    <!-- Se pinta desde /api/menu -->
+  </div>
 </section>
+
+<footer>
+  <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
+</footer>
+
+<div class="botones-flotantes">
+  <button class="btn-flotante" onclick="window.history.back()">⏪ Retroceder</button>
+  <button id="btn-total" class="btn-flotante">$0 COP</button>
+  <button class="btn-flotante btn-continuar" id="btn-continuar">Continuar ⏩</button>
 </div>
-  </form> <!-- ← CIERRA AQUÍ -->
-</section>
-<section class="menu">
-  <h2>Postres y Dulces</h2>
-  <div class="peliculas">
 
-    <!-- Supergirl -->
-    <div class="card">
-      <img src="../menu/comida/sundae.png" alt="Super Sundae">
-      <h3>Super Sundae</h3>
-      <p>Helado con los colores de Supergirl.</p>
-      <span class="price">$16.000</span>
-      <button type="button" class="btn-comprar" data-comida="Super Sundae" data-precio="16000">Comprar</button>
-    </div>
-
-    <!-- Avengers -->
-    <div class="card">
-      <img src="../menu/comida/popcorn.png" alt="Infinity Popcorn">
-      <h3>Infinity Popcorn</h3>
-      <p>Palomitas de colores, como las gemas del infinito.</p>
-      <span class="price">$15.000</span>
-      <button type="button" class="btn-comprar" data-comida="Infinity Popcorn" data-precio="15000">Comprar</button>
-    </div>
-
-    <!-- Saw V -->
-    <div class="card">
-      <img src="../menu/comida/brownie.png" alt="Game Over Brownie">
-      <h3>Game Over Brownie</h3>
-      <p>Brownie de chocolate negro con salsa de frambuesa y trozos blancos en forma de rompecabezas.</p>
-      <span class="price">$8.000</span>
-      <button type="button" class="btn-comprar" data-comida="Game Over Brownie" data-precio="8000">Comprar</button>
-    </div>
-
-    <!-- SpiderMan -->
-    <div class="card">
-      <img src="../menu/comida/cheesecake.png" alt="Red & Black Cheesecake">
-      <h3>Red & Black Cheesecake</h3>
-      <p>Postre inspirado en los colores icónicos de Spider-Man.</p>
-      <span class="price">$16.000</span>
-      <button type="button" class="btn-comprar" data-comida="Red & Black Cheesecake" data-precio="16000">Comprar</button>
-    </div>
-
-    <!-- Scott Pilgrim -->
-    <div class="card">
-      <img src="../menu/comida/scott.png" alt="Extra Life Brownie">
-      <h3>Extra Life Brownie</h3>
-      <p>Brownie con energía retro, chocolate intenso y colores neón.</p>
-      <span class="price">$10.000</span>
-      <button type="button" class="btn-comprar" data-comida="Extra Life Brownie" data-precio="10000">Comprar</button>
-    </div>
-  </div>
-</section>
-
-
-<section class="menu">
-  <h2>Bebidas</h2>
-  <div class="peliculas">
-
-    <!-- Star Wars III -->
-    <div class="card">
-      <img src="../menu/comida/coctelsw.png" alt="Mustafar Lava Drink">
-      <h3>Mustafar Lava Drink</h3>
-      <p>Cóctel inspirado en la batalla de Anakin y Obi-Wan, con colores de lava ardiente.</p>
-      <span class="price">$20.000</span>
-      <button type="button" class="btn-comprar" data-comida="Mustafar Lava Drink" data-precio="20000">Comprar</button>
-    </div>
-
-    <!-- Back To The Future 2 -->
-    <div class="card">
-      <img src="../menu/comida/hoverfizz.png" alt="HoverFizz 2015">
-      <h3>HoverFizz 2015</h3>
-      <p>Bebida chispeante y colorida, como un Café de los 80’s.</p>
-      <span class="price">$13.000</span>
-      <button type="button" class="btn-comprar" data-comida="HoverFizz 2015" data-precio="13000">Comprar</button>
-    </div>
-
-    <!-- Kill Bill 2 -->
-    <div class="card">
-      <img src="../menu/comida/five.png" alt="Five Point Palm Punch">
-      <h3>Five Point Palm Punch</h3>
-      <p>Cóctel oriental, amargo y minimalista, como un ritual de combate.</p>
-      <span class="price">$24.000</span>
-      <button type="button" class="btn-comprar" data-comida="Five Point Palm Punch" data-precio="24000">Comprar</button>
-    </div>
-
-    <!-- Social Network -->
-    <div class="card">
-      <img src="../menu/comida/mark.png" alt="The Algorithm">
-      <h3>The Algorithm</h3>
-      <p>Cóctel moderno y amargo, con un fondo fuerte como la película.</p>
-      <span class="price">$20.000</span>
-      <button type="button" class="btn-comprar" data-comida="The Algorithm" data-precio="20000">Comprar</button>
-    </div>
-
-    <!-- Superman -->
-    <div class="card">
-      <img src="../menu/comida/superman.png" alt="Kriptonita Fizz">
-      <h3>Kriptonita Fizz</h3>
-      <p>Cóctel chispeante, tropical y refrescante, brillante como Superman.</p>
-      <span class="price">$12.000</span>
-      <button type="button" class="btn-comprar" data-comida="Kriptonita Fizz" data-precio="12000">Comprar</button>
-    </div>
-
-    <!-- Godfather 2 -->
-    <div class="card">
-      <img src="../menu/comida/godfather.png" alt="Il Tradimento">
-      <h3>Il Tradimento</h3>
-      <p>Cóctel elegante, intenso y amargo, como la soledad de Michael Corleone.</p>
-      <span class="price">$28.000</span>
-      <button type="button" class="btn-comprar" data-comida="Il Tradimento" data-precio="28000">Comprar</button>
-    </div>
-
-    <!-- Child’s Play 2 -->
-    <div class="card">
-      <img src="../menu/comida/childplay.png" alt="Sangre de Juguete">
-      <h3>Sangre de Juguete</h3>
-      <p>Bebida frutal con espuma cremosa y mini cuchillo de chocolate.</p>
-      <span class="price">$15.000</span>
-      <button type="button" class="btn-comprar" data-comida="Sangre de Juguete" data-precio="15000">Comprar</button>
-    </div>
-
-    <!-- Harry Potter 1 -->
-    <div class="card">
-      <img src="../menu/comida/pocion.png" alt="Poción de Inicio">
-      <h3>Poción de Inicio</h3>
-      <p>Chocolate caliente con crema batida, cacao brillante y galletas mágicas.</p>
-      <span class="price">$13.000</span>
-      <button type="button" class="btn-comprar" data-comida="Poción de Inicio" data-precio="13000">Comprar</button>
-    </div>
-  </div>
-</section>
-
-
-  <footer>
-    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
-  </footer>
-  
-    <div class="botones-flotantes">
-    <button class="btn-flotante" onclick="window.history.back()">⏪ Retroceder</button>
-    <button id="btn-total" class="btn-flotante">$0 COP</button>
-    <button class="btn-flotante btn-continuar" id="btn-continuar">Continuar ⏩</button>
-  </div>
-
-  <script src="reservacion.js"></script>
+<script src="reservacioncomida.js" defer></script>
 </body>
 </html>

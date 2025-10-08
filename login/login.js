@@ -41,6 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 5) Limpiar llaves que ya no necesitamos
     localStorage.removeItem("reservacionDestino");
-    // (NO borres pendingMovie, la usaremos si se refresca)
+    
   });
 });

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicia Sesión - El Séptimo Bocado</title>
-  <link rel="stylesheet" href="login.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro - El Séptimo Bocado</title>
+  <link rel="stylesheet" href="login.css"/>
 </head>
 <body>
 <header class="navbar">
@@ -25,38 +25,38 @@
 
 <section class="login-section">
   <div class="login-container">
-    <h2>Iniciar Sesión</h2>
-    <form id="loginForm">
+    <h2>Crear cuenta</h2>
+    <form id="registerForm">
+      <input id="nombre" type="text" placeholder="Nombre" required>
       <input id="email" type="email" placeholder="Correo electrónico" required>
-      <input id="password" type="password" placeholder="Contraseña" required>
-      <button type="submit">Iniciar Sesión</button>
-      <button type="button" onclick="window.location.href='registro.html'" class="secundario">Regístrate</button>
+      <input id="password" type="password" placeholder="Contraseña (mín. 4)" minlength="4" required>
+      <button type="submit">Registrarme</button>
+      <button type="button" onclick="window.location.href='login.html'" class="secundario">Ya tengo cuenta</button>
     </form>
   </div>
 </section>
 
-<footer>
-  <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
-</footer>
+<footer><p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p></footer>
 
 <script type="module">
-  import { login } from "../auth/auth.js";
+  import { register } from "../auth/auth.js";
 
-  const form = document.getElementById('loginForm');
-  form.addEventListener('submit', async (e)=>{
+  const form = document.getElementById("registerForm");
+  form.addEventListener("submit", async (e)=>{
     e.preventDefault();
+    const nombre   = document.getElementById("nombre").value.trim();
     const email    = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
     try{
-      await login({ email, password });
+      await register({ nombre, email, password });
       let destino = localStorage.getItem("reservacionDestino") || "../reservacion/reservacion.html";
       const pending = localStorage.getItem("pendingMovie");
       localStorage.removeItem("reservacionDestino");
       if (pending) destino += `#pm=${encodeURIComponent(pending)}`;
       window.location.href = destino;
     }catch(err){
-      alert("No se pudo iniciar sesión: " + (err.message || "Error"));
+      alert("No se pudo registrar: " + (err.message || "Error"));
     }
   });
 </script>

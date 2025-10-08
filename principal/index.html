@@ -6,8 +6,93 @@
   <title>El Séptimo Bocado</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+<script>
+(function () {
+  const API = "http://localhost:8080/api/movies";
+
+  // Normaliza nombres de campos por si cambian
+  const mapMovie = (m) => ({
+    id: m.id,
+    titulo: m.titulo || m.title || "Película",
+    imagen: m.coverArt || m.poster || "",
+    poster: m.poster || "",
+    fondo: m.fondo || "",
+    director: m.director || "",
+    generos: m.generos || "",
+    duracion: m.duracion || "",
+    rating: typeof m.rating === "number" ? m.rating : null,
+    activo: m.activo !== false,
+  });
+
+  function stars(r) {
+    if (typeof r !== "number") return "—";
+    const full = Math.floor(r);
+    const half = (r - full) >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
+  }
+
+  function cardHTML(movie) {
+    const alt = movie.titulo.replace(/"/g, "&quot;");
+    const img = movie.imagen
+      ? `<img src="${movie.imagen}" alt="${alt}" style="width:100%; border-radius:8px; margin-bottom:10px;">`
+      : `<div style="width:100%;height:180px;border-radius:8px;margin-bottom:10px;background:#eee;display:flex;align-items:center;justify-content:center;color:#666;">Sin imagen</div>`;
+
+    const pm = encodeURIComponent(JSON.stringify({
+      titulo: movie.titulo,
+      poster: movie.poster || movie.imagen,
+      fondo: movie.fondo,
+      director: movie.director,
+      generos: movie.generos,
+      duracion: movie.duracion
+    }));
+
+    return `
+      <div class="card">
+        ${img}
+        <h3>${movie.titulo}</h3>
+        <p>${stars(movie.rating)}</p>
+        <a href="../reservacion/reservacion.html#pm=${pm}">
+          <button>Ver Detalles</button>
+        </a>
+      </div>
+    `;
+  }
+
+  function renderList(containerId, list) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    if (!list.length) {
+      el.innerHTML = '<p style="opacity:.7;">No hay elementos para mostrar.</p>';
+      return;
+    }
+    el.innerHTML = list.map(cardHTML).join("");
+  }
+
+  fetch(API)
+    .then(r => {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(data => {
+      const movies = Array.isArray(data) ? data.map(mapMovie) : [];
+      const enCartelera = movies.filter(m => m.activo);
+      const proximos = movies.filter(m => !m.activo);
+
+      renderList("cartelera-list", enCartelera);
+      renderList("estrenos-list", proximos);
+    })
+    .catch(err => {
+      console.error("[cartelera] error:", err);
+      const c1 = document.getElementById("cartelera-list");
+      const c2 = document.getElementById("estrenos-list");
+      if (c1) c1.innerHTML = `<p style="color:#b00020;">No pude cargar la cartelera desde ${API}</p>`;
+      if (c2) c2.innerHTML = `<p style="color:#b00020;">No pude cargar los estrenos desde ${API}</p>`;
+    });
+})();
+</script>
+
 <body>
-  <!-- Barra de Navegacion -->
 <header class="navbar">
   <a href="../principal/index.html" class="logo">
     <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
@@ -18,13 +103,12 @@
       <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
       <li><a href="../menu/menu.html">Menu</a></li>
       <li><a href="../eventos/eventos.html">Eventos</a></li>
-      <li><a href="#">Inicia Sesion</a></li>
+      <li><a href="../login/login.html">Inicia Sesion</a></li>
       <li><a href="../contacto/contacto.html">Contacto</a></li>
     </ul>
   </nav>
 </header>
 
-  <!-- Fondo, Hero y Buscador -->
 <section class="hero">
   <div class="hero-content">
     <img src="../iconos/bienvenido.png" alt="Bienvenido a" style="height:90px; display:block; margin:0 auto;">
@@ -32,7 +116,6 @@
       <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:90px;">
     </div>
     <p>Disfruta del mejor cine mientras saboreas exquisitos platos.</p>
-    <!-- Buscador de películas -->
     <div class="buscador">
       <input type="text" placeholder="Buscar película...">
       <button>Buscar</button>
@@ -40,132 +123,88 @@
   </div>
 </section>
 
-  <!-- Cartelera de películas actuales -->
-  <section class="cartelera">
-    <h2>Cartelera</h2>
-    <div class="peliculas">
-      <!-- Tarjeta Kill Bill Vol. 2 -->
-      <div class="card">
-        <img src="../iconos/Kill-Bill-2.png" alt="Kill Bill: Vol. 2" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Kill Bill: Vol. 2</h3>
-        <p>⭐⭐⭐⭐⭐</p>
-        <a href="../detalles/KillBill2Detalles.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Volver al Futuro II -->
-      <div class="card">
-        <img src="../iconos/back-2.png" alt="Volver al Futuro 2" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Volver al futuro II</h3>
-        <p>⭐⭐⭐⭐⭐</p>
-        <a href="../detalles/backtothefuture2detalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Star Wars: Episodio III -->
-      <div class="card">
-        <img src="../iconos/star-3.png" alt="Star Wars: Episodio III" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Star Wars: Episodio III</h3>
-        <p>⭐⭐⭐⭐☆</p>
-        <a href="../detalles/starwars3detalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta The Social Network -->
-      <div class="card">
-        <img src="../iconos/social.png" alt="The Social Network" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>The Social Network</h3>
-        <p>⭐⭐⭐⭐⭐</p>
-        <a href="../detalles/thesocialnetworkdetalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Saw V -->
-      <div class="card">
-        <img src="../iconos/sawv.png" alt="Saw V" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Saw V</h3>
-        <p>⭐⭐⭐☆☆</p>
-        <a href="../detalles/sawvdetalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
+<section class="cartelera">
+  <h2>Cartelera</h2>
+  <div id="cartelera-list" class="peliculas"></div>
+</section>
+
+<section class="promocion">
+  <h2>Promoción Especial: Noche de Pareja</h2>
+  <p>Disfruta de una noche especial con cena gourmet, bebida y película.</p>
+  <button>Reservar Ahora</button>
+</section>
+
+<section class="estrenos">
+  <h2>Próximos Estrenos</h2>
+  <div class="peliculas">
+    <div class="card">
+      <img src="../iconos/mortal-kombat-2.png" alt="Mortal Kombat 2" style="width:100%; border-radius:8px; margin-bottom:10px;">
+      <h3>Mortal Kombat 2</h3>
+      <a href="../detalles/mortalkombat2detalle.html">
+        <button>Ver Detalles</button>
+      </a>
     </div>
-  </section>
-
-  <!-- Promoción Especial -->
-  <section class="promocion">
-    <h2>Promoción Especial: Noche de Pareja</h2>
-    <p>Disfruta de una noche especial con cena gourmet, bebida y película.</p>
-    <button>Reservar Ahora</button>
-  </section>
-
-  <!-- Próximos Estrenos -->
-  <section class="estrenos">
-    <h2>Próximos Estrenos</h2>
-    <div class="peliculas">
-      <!-- Tarjeta Mortal Kombat 2 -->
-      <div class="card">
-        <img src="../iconos/mortal-kombat-2.png" alt="Mortal Kombat 2" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Mortal Kombat 2</h3>
-        <a href="../detalles/mortalkombat2detalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Demon Slayer -->
-      <div class="card">
-        <img src="../iconos/kimetsu.png" alt="Demon Slayer The Movie: Infinity Castle" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Demon Slayer The Movie: Infinity Castle</h3>
-        <a href="../detalles/demonslayerdetalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Avengers: Doomsday -->
-      <div class="card">
-        <img src="../iconos/avengers.png" alt="Avengers: Doomsday" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Avengers: Doomsday</h3>
-        <a href="../detalles/avengersdoomsdaydetalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Batman Azteca -->
-      <div class="card">
-        <img src="../iconos/batman.png" alt="Batman Azteca: Choque de imperios" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Batman Azteca: Choque de imperios</h3>
-        <a href="../detalles/batmanaztecadetalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
-      <!-- Tarjeta Brand New Day -->
-      <div class="card">
-        <img src="../iconos/spiderman.png" alt="Spider-Man: Brand New Day" style="width:100%; border-radius:8px; margin-bottom:10px;">
-        <h3>Spider-Man: Brand New Day</h3>
-        <a href="../detalles/spiderman4detalle.html">
-          <button>Ver Detalles</button>
-        </a>
-      </div>
+    <div class="card">
+      <img src="../iconos/kimetsu.png" alt="Demon Slayer The Movie: Infinity Castle" style="width:100%; border-radius:8px; margin-bottom:10px;">
+      <h3>Demon Slayer The Movie: Infinity Castle</h3>
+      <a href="../detalles/demonslayerdetalle.html">
+        <button>Ver Detalles</button>
+      </a>
     </div>
-  </section>
-
-  <!-- Eventos Especiales -->
-  <section class="eventos">
-    <h2>Eventos Especiales</h2>
-    <div class="event-cards">
-      <div class="card">
-        <h3>Festival de Cine Independiente</h3>
-        <p>12 de Septiembre</p>
-        <button>Más Info</button>
-      </div>
-      <div class="card">
-        <h3>Maratón de Ciencia Ficción</h3>
-        <p>20 de Septiembre</p>
-        <button>Más Info</button>
-      </div>
+    <div class="card">
+      <img src="../iconos/avengers.png" alt="Avengers: Doomsday" style="width:100%; border-radius:8px; margin-bottom:10px;">
+      <h3>Avengers: Doomsday</h3>
+      <a href="../detalles/avengersdoomsdaydetalle.html">
+        <button>Ver Detalles</button>
+      </a>
     </div>
-  </section>
+    <div class="card">
+      <img src="../iconos/batman.png" alt="Batman Azteca: Choque de imperios" style="width:100%; border-radius:8px; margin-bottom:10px;">
+      <h3>Batman Azteca: Choque de imperios</h3>
+      <a href="../detalles/batmanaztecadetalle.html">
+        <button>Ver Detalles</button>
+      </a>
+    </div>
+    <div class="card">
+      <img src="../iconos/spiderman.png" alt="Spider-Man: Brand New Day" style="width:100%; border-radius:8px; margin-bottom:10px;">
+      <h3>Spider-Man: Brand New Day</h3>
+      <a href="../detalles/spiderman4detalle.html">
+        <button>Ver Detalles</button>
+      </a>
+    </div>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
-  </footer>
+<footer>
+  <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
+</footer>
+
+<!-- Módulo: exigir login en los enlaces a la reserva -->
+<script type="module">
+  import { isLoggedIn, saveAfterLoginRedirect, savePendingMovie } from "../auth/auth.js";
+
+  document.addEventListener("click", (e)=>{
+    const link = e.target.closest('a[href*="reservacion/reservacion.html"]');
+    if (!link) return;
+
+    try{
+      const url  = new URL(link.getAttribute("href"), location.href);
+      const hash = url.hash || "";
+      let pmObj = null;
+      if (hash.startsWith("#pm=")) {
+        pmObj = JSON.parse(decodeURIComponent(hash.slice(4)));
+      }
+      if (pmObj) savePendingMovie(pmObj);
+      saveAfterLoginRedirect("../reservacion/reservacion.html");
+
+      if (!isLoggedIn()){
+        e.preventDefault();
+        window.location.href = "../login/login.html";
+      }
+    }catch(err){
+      console.warn("Intercept pm fail:", err);
+    }
+  });
+</script>
 </body>
 </html>
