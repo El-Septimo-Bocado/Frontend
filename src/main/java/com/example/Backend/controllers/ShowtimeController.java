@@ -17,36 +17,24 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/showtimes")
 @Tag(name = "Funciones", description = "Horarios por película")
 public class ShowtimeController {
-    private final ShowtimeService service;
 
-    @Autowired
+    private final ShowtimeService service;
     public ShowtimeController(ShowtimeService service) { this.service = service; }
 
     @GetMapping
-    @Operation(
-            summary = "Listar funciones por película",
-            description = "Devuelve todas las funciones disponibles filtradas por el parámetro ?movieId={id}."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente"),
-            @ApiResponse(responseCode = "400", description = "Parámetros inválidos")
-    })
+    @Operation(summary = "Listar funciones por movieId")
     public ResponseEntity<List<Showtime>> listByMovie(@RequestParam String movieId) {
-        return new ResponseEntity<>(service.findAllByMovie(movieId), HttpStatus.OK);
+        return ResponseEntity.ok(service.findAllByMovie(movieId));
     }
 
     @GetMapping("/{id}")
-    @Operation(
-            summary = "Obtener función por ID",
-            description = "Devuelve los detalles de una función específica, incluyendo horario y precio base."
-    )
+    @Operation(summary = "Obtener función por ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Función encontrada"),
-            @ApiResponse(responseCode = "404", description = "Función no encontrada")
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "No encontrada")
     })
     public ResponseEntity<Showtime> get(@PathVariable String id) {
         Showtime s = service.findById(id);
-        return (s != null) ? new ResponseEntity<>(s, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return (s != null) ? ResponseEntity.ok(s) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

@@ -17,56 +17,45 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/orders")
-@Tag(name = "Órdenes", description = "Crear, pagar y obtener recibo")
+@Tag(name = "Órdenes", description = "Crear, pagar y recibo")
 public class OrderController {
-    @Autowired
-    private OrderService orders;
 
-    // Estos records viven SOLO aquí:
+    private final OrderService orders;
+    public OrderController(OrderService orders) { this.orders = orders; }
+
     record CreateOrderDto(String showtimeId, String holdId, java.util.List<LineDto> items) {}
     record LineDto(String reference, int qty) {}
 
     @PostMapping
-    @Operation(summary = "Crear orden",
-            description = "Crea una orden a partir de un bloque (holdId) de asientos y una lista opcional de ítems del menú.")
+    @Operation(summary = "Crear orden")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Orden creada"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos o hold vacío")
+            @ApiResponse(responseCode = "201", description = "Creada"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     public ResponseEntity<Order> create(@RequestBody CreateOrderDto dto) {
         var itemLines = (dto.items()==null) ? java.util.List.<OrderLine>of()
                 : dto.items().stream().map(d -> {
             OrderLine l = new OrderLine();
-            l.setType(DetalleTipo.MENU); // tu service lo entiende
+            l.setType(DetalleTipo.MENU);
             l.setReference(d.reference());
             l.setQty(d.qty());
             return l;
         }).toList();
 
-        return new ResponseEntity<>(orders.createFromHold(dto.showtimeId(), dto.holdId(), itemLines),
-                HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(orders.createFromHold(dto.showtimeId(), dto.holdId(), itemLines));
     }
 
     record PayDto(String holdId) {}
     @PostMapping("/{orderId}/pay")
-    @Operation(summary = "Pagar orden",
-            description = "Confirma asientos (RESERVADO → OCUPADO) y marca la orden como pagada.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Orden pagada"),
-            @ApiResponse(responseCode = "404", description = "Orden no encontrada")
-    })
+    @Operation(summary = "Pagar orden")
     public ResponseEntity<Order> pay(@PathVariable String orderId, @RequestBody PayDto dto) {
-        return new ResponseEntity<>(orders.pay(orderId, dto.holdId()), HttpStatus.OK);
+        return ResponseEntity.ok(orders.pay(orderId, dto.holdId()));
     }
 
     @GetMapping("/{orderId}/receipt")
-    @Operation(summary = "Obtener recibo",
-            description = "Devuelve datos de película, asientos, comida y totales para el recibo.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Recibo obtenido"),
-            @ApiResponse(responseCode = "404", description = "Orden no encontrada")
-    })
+    @Operation(summary = "Obtener recibo")
     public ResponseEntity<ReceiptDto> receipt(@PathVariable String orderId) {
-        return new ResponseEntity<>(orders.receipt(orderId), HttpStatus.OK);
+        return ResponseEntity.ok(orders.receipt(orderId));
     }
 }

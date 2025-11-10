@@ -9,6 +9,7 @@ import com.example.Backend.modelos.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,80 +31,62 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/usuarios")
-@Tag(name = "Usuarios", description = "API para la gestión de usuarios")
+@Tag(name = "Usuarios", description = "Gestión de usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    public UsuarioController(UsuarioService usuarioService) { this.usuarioService = usuarioService; }
 
-    @Autowired
-    public UsuarioController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
-
-    // =========================
-    // Helpers
-    // =========================
     private RolUsuario parseRol(String raw) {
         if (raw == null) throw new IllegalArgumentException("ROL_REQUIRED");
-        switch (raw.trim().toUpperCase()) {
-            case "ADMIN": return RolUsuario.ADMIN;
-            case "USER":  return RolUsuario.USER;
-            default: throw new IllegalArgumentException("ROL_INVALID");
-        }
+        return switch (raw.trim().toUpperCase()) {
+            case "ADMIN" -> RolUsuario.ADMIN;
+            case "USER"  -> RolUsuario.USER;
+            default -> throw new IllegalArgumentException("ROL_INVALID");
+        };
     }
 
-    // =========================
-    // Endpoints
-    // =========================
     @GetMapping
-    @Operation(summary = "Obtener todos los usuarios")
+    @Operation(summary = "Listar usuarios")
     public ResponseEntity<List<Usuario>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
-    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    @ApiResponse(responseCode = "404", description = "No encontrado")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable String id) {
-        Usuario usuario = usuarioService.findById(id);
-        return (usuario != null) ? ResponseEntity.ok(usuario)
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        Usuario u = usuarioService.findById(id);
+        return (u != null) ? ResponseEntity.ok(u) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    // Crear por aquí NO pone contraseña ni eleva rol; el registro real es /api/auth/register
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    @Operation(summary = "Crear usuario (no pone contraseña aquí; usar /api/auth/register)")
+    @Operation(summary = "Crear usuario (ADMIN) - sin password")
     public ResponseEntity<Usuario> createUsuario(@RequestBody Usuario in) {
-        // Ignorar campos sensibles si vienen
         in.setId(null);
-        in.setPasswordHash(null);          // la contraseña se gestiona en /api/auth/register
-        in.setRol(RolUsuario.USER);        // evita elevar rol por POST
-        Usuario created = usuarioService.save(in);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        in.setPasswordHash(null);
+        in.setRol(RolUsuario.USER);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(in));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar usuario (nombre/email). No toca password/rol/fecha.")
-    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    @Operation(summary = "Actualizar usuario (ADMIN): nombre/email")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable String id, @RequestBody Usuario in) {
         Usuario existing = usuarioService.findById(id);
         if (existing == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-        // Merge seguro
         if (in.getNombre() != null) existing.setNombre(in.getNombre());
         if (in.getEmail()  != null) existing.setEmail(in.getEmail());
 
-        // No tocar:
-        // existing.setPasswordHash(...)
-        // existing.setRol(...)
-        // existing.setFechaRegistro(...)
-
-        Usuario updated = usuarioService.update(existing);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(usuarioService.update(existing));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar usuario")
-    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    @Operation(summary = "Eliminar usuario (ADMIN)")
     public ResponseEntity<Void> deleteUsuario(@PathVariable String id) {
         Usuario existing = usuarioService.findById(id);
         if (existing == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -112,17 +95,20 @@ public class UsuarioController {
     }
 
     @GetMapping("/buscar")
-    @Operation(summary = "Buscar usuarios por filtros", description = "Busca por nombre y/o email")
+    @Operation(summary = "Buscar por nombre/email")
     public ResponseEntity<List<Usuario>> buscarUsuarios(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String email) {
         return ResponseEntity.ok(usuarioService.buscarPorFiltros(nombre, email));
     }
 
+    static class RoleDto { public String rol; }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/role")
-    @Operation(summary = "Cambiar rol de usuario (USER/ADMIN)")
+    @Operation(summary = "Cambiar rol (ADMIN)")
     @ApiResponse(responseCode = "400", description = "Rol inválido")
-    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    @ApiResponse(responseCode = "404", description = "No encontrado")
     public ResponseEntity<?> updateRole(@PathVariable String id, @RequestBody RoleDto body) {
         Usuario u = usuarioService.findById(id);
         if (u == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -130,12 +116,9 @@ public class UsuarioController {
         try {
             RolUsuario role = parseRol(body == null ? null : body.rol);
             u.setRol(role);
-            Usuario up = usuarioService.update(u);
-            return ResponseEntity.ok(up);
+            return ResponseEntity.ok(usuarioService.update(u));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
-
-    static class RoleDto { public String rol; }
 }

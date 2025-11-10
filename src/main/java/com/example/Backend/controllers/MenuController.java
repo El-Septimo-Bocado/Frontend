@@ -7,6 +7,7 @@ import com.example.Backend.service.MenuItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,84 +19,60 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/menu")
-@Tag(name = "Menú", description = "API para la gestión de productos de comida/bebida")
+@Tag(name = "Menú", description = "Productos de comida/bebida")
 public class MenuController {
-    private final MenuItemService service;
 
-    @Autowired
-    public MenuController(MenuItemService service) {
-        this.service = service;
-    }
+    private final MenuItemService service;
+    public MenuController(MenuItemService service) { this.service = service; }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los productos del menú")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista obtenida con éxito")
-    })
-    public ResponseEntity<List<MenuItem>> getAll() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
-    }
+    @Operation(summary = "Listar menú")
+    public ResponseEntity<List<MenuItem>> getAll() { return ResponseEntity.ok(service.findAll()); }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener producto del menú por ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Producto encontrado"),
-            @ApiResponse(responseCode = "404", description = "No encontrado")
-    })
+    @Operation(summary = "Obtener item por ID")
     public ResponseEntity<MenuItem> getById(@PathVariable String id) {
         MenuItem item = service.findById(id);
-        return (item != null) ? new ResponseEntity<>(item, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return (item != null) ? ResponseEntity.ok(item) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    @Operation(summary = "Crear un nuevo producto del menú")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Creado con éxito"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
-    })
+    @Operation(summary = "Crear item (ADMIN)")
     public ResponseEntity<MenuItem> create(@RequestBody MenuItem item) {
-        return new ResponseEntity<>(service.save(item), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(item));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar un producto del menú")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Actualizado con éxito"),
-            @ApiResponse(responseCode = "404", description = "No encontrado")
-    })
+    @Operation(summary = "Actualizar item (ADMIN)")
     public ResponseEntity<MenuItem> update(@PathVariable String id, @RequestBody MenuItem item) {
         MenuItem existing = service.findById(id);
-        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (existing == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         item.setId(Long.valueOf(id));
-        return new ResponseEntity<>(service.update(item), HttpStatus.OK);
+        return ResponseEntity.ok(service.update(item));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar un producto del menú")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Eliminado con éxito"),
-            @ApiResponse(responseCode = "404", description = "No encontrado")
-    })
+    @Operation(summary = "Eliminar item (ADMIN)")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         MenuItem existing = service.findById(id);
-        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (existing == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         service.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/buscar")
-    @Operation(summary = "Buscar productos por filtros (nombre, categoría, activo, precio)")
+    @Operation(summary = "Buscar por filtros")
     public ResponseEntity<List<MenuItem>> buscar(
             @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String categoria, // usar 'plato'/'postre'/'bebida'
+            @RequestParam(required = false) String categoria,
             @RequestParam(required = false) Boolean activo,
             @RequestParam(required = false) Integer precioMin,
             @RequestParam(required = false) Integer precioMax) {
-
-        return new ResponseEntity<>(
-                service.buscarPorFiltros(nombre, categoria, activo, precioMin, precioMax),
-                HttpStatus.OK
+        return ResponseEntity.ok(
+                service.buscarPorFiltros(nombre, categoria, activo, precioMin, precioMax)
         );
     }
 }

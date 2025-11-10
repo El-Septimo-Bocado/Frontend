@@ -6,6 +6,7 @@ import com.example.Backend.modelos.Movie;
 import com.example.Backend.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.*;
@@ -17,80 +18,53 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/movies")
 @Tag(name = "Películas", description = "API de cartelera")
 public class MovieController {
-    private final MovieService service;
 
-    @Autowired
+    private final MovieService service;
     public MovieController(MovieService service) { this.service = service; }
 
     @GetMapping
-    @Operation(
-            summary = "Listar películas activas",
-            description = "Devuelve todas las películas activas actualmente disponibles en cartelera."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
-    })
+    @Operation(summary = "Listar películas")
+    @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<List<Movie>> list() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    @Operation(
-            summary = "Obtener película por ID",
-            description = "Devuelve la información completa de una película específica según su ID."
-    )
+    @Operation(summary = "Obtener película por ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Película encontrada"),
-            @ApiResponse(responseCode = "404", description = "Película no encontrada")
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "No encontrada")
     })
     public ResponseEntity<Movie> get(@PathVariable String id) {
         Movie m = service.findById(id);
-        return (m != null) ? new ResponseEntity<>(m, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return (m != null) ? ResponseEntity.ok(m) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    @Operation(
-            summary = "Agregar nueva película",
-            description = "Permite al administrador agregar una película a la cartelera con sus respectivos datos."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Película creada correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
-    })
+    @Operation(summary = "Crear película (ADMIN)")
+    @ApiResponse(responseCode = "201", description = "Creada")
     public ResponseEntity<Movie> create(@RequestBody Movie m) {
-        return new ResponseEntity<>(service.save(m), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(m));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    @Operation(
-            summary = "Actualizar película",
-            description = "Actualiza los datos de una película existente. Solo accesible para el administrador."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Película actualizada correctamente"),
-            @ApiResponse(responseCode = "404", description = "Película no encontrada")
-    })
+    @Operation(summary = "Actualizar película (ADMIN)")
     public ResponseEntity<Movie> update(@PathVariable String id, @RequestBody Movie m) {
         Movie exist = service.findById(id);
-        if (exist == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (exist == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         m.setId(Long.valueOf(id));
-        return new ResponseEntity<>(service.update(m), HttpStatus.OK);
+        return ResponseEntity.ok(service.update(m));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    @Operation(
-            summary = "Eliminar película",
-            description = "Elimina una película del sistema. Solo accesible para el administrador."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Película eliminada correctamente"),
-            @ApiResponse(responseCode = "404", description = "Película no encontrada")
-    })
+    @Operation(summary = "Eliminar película (ADMIN)")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         Movie exist = service.findById(id);
-        if (exist == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (exist == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         service.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

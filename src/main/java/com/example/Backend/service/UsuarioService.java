@@ -25,9 +25,12 @@ public class UsuarioService {
             return n && e;
         }).toList();
     }
-
-    public Usuario findByAuthToken(String token) {
-        // Si luego persistimos tokens, lo traemos de BD. Por ahora, null.
+/*public Usuario findByAuthToken(String token) {
+    try {
+        //tenerlo listo por si las moscas
+        return null; // ya no hace falta debido a que /api/auth/me del AuthService ya lo cumle
+    } catch (Exception e) {
         return null;
     }
+}*/
 }

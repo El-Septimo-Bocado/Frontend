@@ -16,11 +16,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/showtimes")
 @Tag(name = "Asientos", description = "Mapa, bloqueo y liberación de asientos por función")
-class SeatingController {
+public class SeatingController {   // ✅ AHORA ES PUBLIC
     private final SeatingService seating;
 
     @Autowired
-    SeatingController(SeatingService s){ this.seating = s; }
+    public SeatingController(SeatingService s){
+        this.seating = s;
+    }
 
     @GetMapping("/{showtimeId}/seats")
     @Operation(
@@ -44,7 +46,7 @@ class SeatingController {
             @ApiResponse(responseCode = "409", description = "Alguno ya no está disponible")
     })
     public ResponseEntity<HoldRes> hold(@PathVariable String showtimeId, @RequestBody HoldReq req){
-        String hid = seating.hold(showtimeId, req.seatCodes(), 5 * 60_000); // 5 min
+        String hid = seating.hold(showtimeId, req.seatCodes(), 5 * 60_000);
         return ResponseEntity.ok(new HoldRes(hid, System.currentTimeMillis() + 5*60_000));
     }
 
