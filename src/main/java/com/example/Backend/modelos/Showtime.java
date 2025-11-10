@@ -1,46 +1,48 @@
 package com.example.Backend.modelos;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "funcion", indexes = {
+        @Index(name = "idx_funcion_pelicula", columnList = "pelicula_id")
+})
 public class Showtime {
-    private String id;
-    private String movieId;
-    private String etiqueta;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(optional = false) @JoinColumn(name = "pelicula_id")
+    private Movie pelicula;
+
+    @Column(name = "horario", nullable = false)
     private LocalDateTime fechaHora;
-    private int basePrice;
 
-    public Showtime() {
-        this.id = UUID.randomUUID().toString();
-    }
+    @Column(name = "precio_base")
+    private Integer basePrice;
 
-    public Showtime(String movieId, String etiqueta, LocalDateTime fechaHora, int basePrice) {
-        this.id = UUID.randomUUID().toString();
-        this.movieId = movieId;
-        this.etiqueta = etiqueta;
-        this.fechaHora = fechaHora;
-        this.basePrice = basePrice;
-    }
+    @Column(name = "sala")
+    private String sala;
 
+    @Transient
+    private String etiqueta;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public String getMovieId() {
-        return movieId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setMovieId(String movieId) {
-        this.movieId = movieId;
+    public Movie getPelicula() {
+        return pelicula;
     }
 
-    public String getEtiqueta() {
-        return etiqueta;
-    }
-
-    public void setEtiqueta(String etiqueta) {
-        this.etiqueta = etiqueta;
+    public void setPelicula(Movie pelicula) {
+        this.pelicula = pelicula;
     }
 
     public LocalDateTime getFechaHora() {
@@ -51,12 +53,27 @@ public class Showtime {
         this.fechaHora = fechaHora;
     }
 
-    public int getBasePrice() {
+    public Integer getBasePrice() {
         return basePrice;
     }
 
-    public void setBasePrice(int basePrice) {
+    public void setBasePrice(Integer basePrice) {
         this.basePrice = basePrice;
     }
 
+    public String getSala() {
+        return sala;
+    }
+
+    public void setSala(String sala) {
+        this.sala = sala;
+    }
+
+    public String getEtiqueta() {
+        return etiqueta;
+    }
+
+    public void setEtiqueta(String etiqueta) {
+        this.etiqueta = etiqueta;
+    }
 }

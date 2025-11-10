@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.Backend.modelos.Movie;
 import com.example.Backend.modelos.Showtime;
+import com.example.Backend.repository.MovieRepository;
 import com.example.Backend.repository.ShowtimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,44 +13,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class ShowtimeService {
     private final ShowtimeRepository repo;
-    private final MovieService movies;
+    private final MovieRepository movies;
     private final SeatingService seating;
 
-    @Autowired
-    public ShowtimeService(ShowtimeRepository repo, MovieService movies, SeatingService seating) {
+    public ShowtimeService(ShowtimeRepository repo, MovieRepository movies, SeatingService seating) {
         this.repo = repo;
         this.movies = movies;
         this.seating = seating;
-        initSample();
-    }
-
-    private void initSample() {
-        // Para cada movie, 3 horarios que calzan con tu UI ("Hoy", "Mañana", "Jueves")
-        for (Movie m : movies.findAll()) {
-            Showtime st1 = save(new Showtime(m.getId(), "Hoy - 22:00",
-                    LocalDateTime.now().withHour(22).withMinute(0), 8000));
-            seating.initForShowtime(st1.getId());
-
-            Showtime st2 = save(new Showtime(m.getId(), "Mañana - 23:30",
-                    LocalDateTime.now().plusDays(1).withHour(23).withMinute(30), 8000));
-            seating.initForShowtime(st2.getId());
-
-            Showtime st3 = save(new Showtime(m.getId(), "Jueves - 00:40",
-                    LocalDateTime.now().plusDays(2).withHour(0).withMinute(40), 8000));
-            seating.initForShowtime(st3.getId());
-        }
+        // initSample();  <-- si quieres sembrar, asegúrate de tener películas primero
     }
 
     public Showtime save(Showtime s) {
-        return repo.save(s);
+        Showtime saved = repo.save(s);
+        seating.initForShowtime(saved.getId());
+        return saved;
     }
 
-
-
-    public Showtime findById(String id) {
-        return repo.findById(id);
+    public Showtime findById(String idStr) {
+        Long id = Long.valueOf(idStr);
+        return repo.findById(id).orElse(null);
     }
-    public List<Showtime> findAllByMovie(String movieId) {
-        return repo.findAllByMovieId(movieId);
+
+    public java.util.List<Showtime> findAllByMovie(String movieIdStr) {
+        Long movieId = Long.valueOf(movieIdStr);
+        var m = movies.findById(movieId).orElse(null);
+        if (m == null) return java.util.List.of();
+        return repo.findByPelicula(m);
     }
 }

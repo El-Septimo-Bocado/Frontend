@@ -1,137 +1,83 @@
 package com.example.Backend.modelos;
 
+import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 
+@Entity
+@Table(name = "pelicula")
 public class Movie {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // títulos/strings con límites razonables (opcional)
+    @Column(nullable = false, unique = true, length = 200)
     private String titulo;
 
-    private String caratula; // Imagen tipo CD (usada en la cartelera principal)
-    private String poster; // Póster vertical (vista de reserva)
-    private String fondo; // Imagen de fondo difuminada (detalle o reserva)
+    @Column(length = 500)
+    private String poster;
 
+    @Column(length = 500)
+    private String fondo;
 
-
+    @Column(length = 200)
     private String director;
+
+    // En BD la columna es singular "genero"
+    @Column(name = "genero", length = 200)
     private String generos;
+
+    @Column(length = 50)
     private String duracion;
-    private double rating;
-    private boolean activo;
-    private String trailerUrl; // Enlace al video de YouTube o Vimeo
 
-    public Movie() {
-        this.id = UUID.randomUUID().toString();
-        this.activo = true;
-    }
+    // 👇 Tipo correcto para DECIMAL(3,1)
+    @Column(name = "calificacion", precision = 3, scale = 1)
+    private BigDecimal rating;
 
-    public Movie(String titulo, String caratula, String poster, String fondo,
-                 String director, String generos, String duracion,
-                 double rating, boolean activo, String trailerUrl) {
-        this.id = UUID.randomUUID().toString();
-        this.titulo = titulo;
-        this.caratula = caratula;
-        this.poster = poster;
-        this.fondo = fondo;
-        this.director = director;
-        this.generos = generos;
-        this.duracion = duracion;
-        this.rating = rating;
-        this.activo = activo;
-        this.trailerUrl = trailerUrl;
-    }
+    @Transient
+    private boolean activo = true;
 
-    // Getters y Setters
-    public String getId() {
-        return id;
-    }
+    @Transient
+    private String caratula;
 
-    public String getTrailerUrl() {
-        return trailerUrl;
-    }
+    @Transient
+    private String trailerUrl;
 
-    public void setTrailerUrl(String trailerUrl) {
-        this.trailerUrl = trailerUrl;
-    }
+    // getters/setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
-    public String getTitulo() {
-        return titulo;
-    }
+    public String getPoster() { return poster; }
+    public void setPoster(String poster) { this.poster = poster; }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+    public String getFondo() { return fondo; }
+    public void setFondo(String fondo) { this.fondo = fondo; }
 
-    public String getCaratula() {
-        return caratula;
-    }
+    public String getDirector() { return director; }
+    public void setDirector(String director) { this.director = director; }
 
-    public void setCaratula(String caratula) {
-        this.caratula = caratula;
-    }
+    public String getGeneros() { return generos; }
+    public void setGeneros(String generos) { this.generos = generos; }
 
+    public String getDuracion() { return duracion; }
+    public void setDuracion(String duracion) { this.duracion = duracion; }
 
-    public String getPoster() {
-        return poster;
-    }
+    public BigDecimal getRating() { return rating; }
+    public void setRating(BigDecimal rating) { this.rating = rating; }
 
-    public void setPoster(String poster) {
-        this.poster = poster;
-    }
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 
-    public String getFondo() {
-        return fondo;
+    public String getCaratula() { return caratula; }
+    public void setCaratula(String caratula) { this.caratula = caratula; }
 
-    }
-
-    public void setFondo(String fondo) {
-        this.fondo = fondo;
-    }
-
-
-    public String getDirector() {
-        return director;
-    }
-
-    public void setDirector(String director) {
-        this.director = director;
-    }
-
-    public String getGeneros() {
-        return generos;
-    }
-
-    public void setGeneros(String generos) {
-        this.generos = generos;
-    }
-
-    public String getDuracion() {
-        return duracion;
-
-    }
-    public void setDuracion(String duracion) {
-        this.duracion = duracion;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
-
-    public boolean isActivo() {
-
-        return activo;
-    }
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
+    public String getTrailerUrl() { return trailerUrl; }
+    public void setTrailerUrl(String trailerUrl) { this.trailerUrl = trailerUrl; }
 }

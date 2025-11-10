@@ -1,18 +1,53 @@
 package com.example.Backend.modelos;
 
-public class SeatStatus {
-    private String showtimeId;
-    private String seatCode;// "A1"
-    private String status;// FREE | HELD | SOLD
-    private String holdId;// si HELD
-    private long holdExpiresAt;// epoch ms
+import com.example.Backend.enums.SeatState;
+import jakarta.persistence.*;
 
-    public String getShowtimeId() {
-        return showtimeId;
+@Entity
+@Table(name = "seat_status",
+        uniqueConstraints = @UniqueConstraint(name="uk_seat_status_funcion_seat", columnNames = {"funcion_id","seat_code"}),
+        indexes = {
+                @Index(name="idx_seat_status_funcion", columnList = "funcion_id"),
+                @Index(name="idx_seat_status_reserva", columnList = "reserva_id")
+        })
+public class SeatStatus {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(optional = false) @JoinColumn(name = "funcion_id")
+    private Showtime showtime;
+
+    @Column(name = "seat_code", length = 10, nullable = false)
+    private String seatCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private SeatState status = SeatState.DISPONIBLE;
+
+    @Column(name = "hold_id")
+    private String holdId;
+
+    @Column(name = "hold_expires_at")
+    private Long holdExpiresAt;
+
+    @ManyToOne @JoinColumn(name = "reserva_id")
+    private Order reserva;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setShowtimeId(String showtimeId) {
-        this.showtimeId = showtimeId;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Showtime getShowtime() {
+        return showtime;
+    }
+
+    public void setShowtime(Showtime showtime) {
+        this.showtime = showtime;
     }
 
     public String getSeatCode() {
@@ -23,11 +58,11 @@ public class SeatStatus {
         this.seatCode = seatCode;
     }
 
-    public String getStatus() {
+    public SeatState getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(SeatState status) {
         this.status = status;
     }
 
@@ -39,11 +74,21 @@ public class SeatStatus {
         this.holdId = holdId;
     }
 
-    public long getHoldExpiresAt() {
+    public Long getHoldExpiresAt() {
         return holdExpiresAt;
     }
 
-    public void setHoldExpiresAt(long holdExpiresAt) {
+    public void setHoldExpiresAt(Long holdExpiresAt) {
         this.holdExpiresAt = holdExpiresAt;
     }
+
+    public Order getReserva() {
+        return reserva;
+    }
+
+    public void setReserva(Order reserva) {
+        this.reserva = reserva;
+    }
+
+    // getters/setters
 }

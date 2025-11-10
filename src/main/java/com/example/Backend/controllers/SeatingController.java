@@ -12,22 +12,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/showtimes")
 @Tag(name = "Asientos", description = "Mapa, bloqueo y liberación de asientos por función")
-class SeatingController {
+public class SeatingController {   // ✅ AHORA ES PUBLIC
     private final SeatingService seating;
+
     @Autowired
-    SeatingController(SeatingService s){ this.seating = s; }
+    public SeatingController(SeatingService s){
+        this.seating = s;
+    }
 
     @GetMapping("/{showtimeId}/seats")
     @Operation(
             summary = "Ver mapa de asientos",
-            description = "Devuelve el estado actual de todos los asientos (FREE, HELD, SOLD) para una función específica."
+            description = "Devuelve el estado de todos los asientos (DISPONIBLE, RESERVADO, OCUPADO) para la función."
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Mapa obtenido correctamente")
-    })
+    @ApiResponses({ @ApiResponse(responseCode = "200", description = "Mapa obtenido correctamente") })
     public ResponseEntity<List<SeatStatus>> seats(@PathVariable String showtimeId){
         return ResponseEntity.ok(seating.getMap(showtimeId));
     }
@@ -37,26 +39,21 @@ class SeatingController {
     @PostMapping("/{showtimeId}/seats/hold")
     @Operation(
             summary = "Bloquear asientos",
-            description = "Bloquea temporalmente los asientos seleccionados durante 5 minutos para evitar duplicidad."
+            description = "Bloquea temporalmente los asientos seleccionados durante 5 minutos."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Asientos bloqueados correctamente"),
-            @ApiResponse(responseCode = "409", description = "Alguno de los asientos ya está ocupado")
+            @ApiResponse(responseCode = "200", description = "Asientos bloqueados"),
+            @ApiResponse(responseCode = "409", description = "Alguno ya no está disponible")
     })
     public ResponseEntity<HoldRes> hold(@PathVariable String showtimeId, @RequestBody HoldReq req){
-        String hid = seating.hold(showtimeId, req.seatCodes(), 5 * 60_000); // 5 min
+        String hid = seating.hold(showtimeId, req.seatCodes(), 5 * 60_000);
         return ResponseEntity.ok(new HoldRes(hid, System.currentTimeMillis() + 5*60_000));
     }
 
     record ReleaseReq(String holdId){}
     @PostMapping("/{showtimeId}/seats/release")
-    @Operation(
-            summary = "Liberar asientos",
-            description = "Libera los asientos previamente bloqueados si el usuario cancela antes del pago."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Asientos liberados correctamente")
-    })
+    @Operation(summary = "Liberar asientos", description = "Libera asientos previamente bloqueados.")
+    @ApiResponses({ @ApiResponse(responseCode = "204", description = "Asientos liberados") })
     public ResponseEntity<Void> release(@PathVariable String showtimeId, @RequestBody ReleaseReq req){
         seating.release(showtimeId, req.holdId());
         return ResponseEntity.noContent().build();

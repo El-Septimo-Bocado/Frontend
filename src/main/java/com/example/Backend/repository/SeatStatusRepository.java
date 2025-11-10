@@ -1,24 +1,14 @@
 package com.example.Backend.repository;
 
 import com.example.Backend.modelos.SeatStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class SeatStatusRepository {
-    // clave compuesta: showtimeId + seatCode
-    private final java.util.Map<String, SeatStatus> db = new java.util.concurrent.ConcurrentHashMap<>();
+import java.util.List;
+import java.util.Optional;
 
-    private String key(String showtimeId, String code) { return showtimeId + "::" + code; }
-
-    public SeatStatus find(String showtimeId, String code) {
-        return db.get(key(showtimeId, code));
-    }
-
-    public void save(SeatStatus s) {
-        db.put(key(s.getShowtimeId(), s.getSeatCode()), s);
-    }
-
-    public java.util.List<SeatStatus> findAllByShowtime(String showtimeId) {
-        return db.values().stream().filter(ss -> ss.getShowtimeId().equals(showtimeId)).toList();
-    }
+public interface SeatStatusRepository extends JpaRepository<SeatStatus, Long> {
+    Optional<SeatStatus> findByShowtimeIdAndSeatCode(Long showtimeId, String seatCode);
+    List<SeatStatus> findByShowtimeId(Long showtimeId);
+    List<SeatStatus> findByShowtimeIdAndHoldId(Long showtimeId, String holdId);
 }

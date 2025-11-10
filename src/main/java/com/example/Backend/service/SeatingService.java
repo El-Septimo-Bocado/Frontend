@@ -1,77 +1,98 @@
 package com.example.Backend.service;
 
-import com.example.Backend.modelos.SeatStatus;
+import com.example.Backend.enums.SeatState;
+import com.example.Backend.modelos.*;
 import com.example.Backend.repository.SeatStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.Backend.repository.ShowtimeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SeatingService {
-    private final SeatStatusRepository repo;
+    private final SeatStatusRepository seatRepo;
+    private final ShowtimeRepository showtimeRepo;
 
-    @Autowired
-    public SeatingService(SeatStatusRepository repo) {
-        this.repo = repo;
-        // init: por ahora marcamos FREE A1..A8 filas A..F (igual a tu HTML)
-        for (char row='A'; row<='F'; row++) {
-            for (int col=1; col<=8; col++) {
-                SeatStatus s = new SeatStatus();
-                s.setSeatCode(row + String.valueOf(col));
-                s.setStatus("FREE");
-                // setShowtimeId para cada showtime al generarlos (puedes hacerlo desde ShowtimeService)
-            }
-        }
+    public SeatingService(SeatStatusRepository seatRepo, ShowtimeRepository showtimeRepo) {
+        this.seatRepo = seatRepo;
+        this.showtimeRepo = showtimeRepo;
     }
 
-    public java.util.List<SeatStatus> getMap(String showtimeId) {
-        return repo.findAllByShowtime(showtimeId);
+    public List<SeatStatus> getMap(String showtimeIdStr){
+        Long showtimeId = parseId(showtimeIdStr);
+        return seatRepo.findByShowtimeId(showtimeId);
     }
 
-    public String hold(String showtimeId, java.util.List<String> seatCodes, long ttlMs) {
-        String holdId = "H-" + java.util.UUID.randomUUID();
+    @Transactional
+    public String hold(String showtimeIdStr, List<String> seatCodes, long ttlMs){
+        Long showtimeId = parseId(showtimeIdStr);
         long exp = System.currentTimeMillis() + ttlMs;
+        String holdId = "H-" + UUID.randomUUID();
+
+        // Validar disponibilidad
         for (String code : seatCodes) {
-            SeatStatus s = repo.find(showtimeId, code);
-            if (s == null || !"FREE".equals(s.getStatus())) {
+            SeatStatus s = seatRepo.findByShowtimeIdAndSeatCode(showtimeId, code)
+                    .orElseThrow(() -> new RuntimeException("SEAT_NOT_FOUND: " + code));
+            if (s.getStatus() != SeatState.DISPONIBLE) {
                 throw new RuntimeException("SEAT_ALREADY_TAKEN: " + code);
             }
         }
+        // Reservar (bloqueo temporal)
         for (String code : seatCodes) {
-            SeatStatus s = repo.find(showtimeId, code);
-            s.setStatus("HELD"); s.setHoldId(holdId); s.setHoldExpiresAt(exp);
-            repo.save(s);
+            SeatStatus s = seatRepo.findByShowtimeIdAndSeatCode(showtimeId, code).get();
+            s.setStatus(SeatState.RESERVADO);
+            s.setHoldId(holdId);
+            s.setHoldExpiresAt(exp);
+            seatRepo.save(s);
         }
         return holdId;
     }
 
-    public void confirmSold(String showtimeId, String holdId) {
-        for (SeatStatus s : repo.findAllByShowtime(showtimeId)) {
-            if ("HELD".equals(s.getStatus()) && holdId.equals(s.getHoldId())) {
-                s.setStatus("SOLD"); s.setHoldId(null); s.setHoldExpiresAt(0);
-                repo.save(s);
-            }
+    @Transactional
+    public void confirmSold(String showtimeIdStr, String holdId){
+        Long showtimeId = parseId(showtimeIdStr);
+        for (SeatStatus s : seatRepo.findByShowtimeIdAndHoldId(showtimeId, holdId)) {
+            s.setStatus(SeatState.OCUPADO);
+            s.setHoldId(null);
+            s.setHoldExpiresAt(null);
+            seatRepo.save(s);
         }
     }
 
-    public void release(String showtimeId, String holdId) {
-        for (SeatStatus s : repo.findAllByShowtime(showtimeId)) {
-            if ("HELD".equals(s.getStatus()) && holdId.equals(s.getHoldId())) {
-                s.setStatus("FREE"); s.setHoldId(null); s.setHoldExpiresAt(0);
-                repo.save(s);
-            }
+    @Transactional
+    public void release(String showtimeIdStr, String holdId){
+        Long showtimeId = parseId(showtimeIdStr);
+        for (SeatStatus s : seatRepo.findByShowtimeIdAndHoldId(showtimeId, holdId)) {
+            s.setStatus(SeatState.DISPONIBLE);
+            s.setHoldId(null);
+            s.setHoldExpiresAt(null);
+            seatRepo.save(s);
         }
     }
 
-    public void initForShowtime(String showtimeId) {
+    /** Inicializa A1..A8 x filas A..F para una función nueva */
+    @Transactional
+    public void initForShowtime(Long showtimeId){
         for (char row='A'; row<='F'; row++) {
             for (int col=1; col<=8; col++) {
-                SeatStatus s = new SeatStatus();
-                s.setShowtimeId(showtimeId);              // ← clave
-                s.setSeatCode(row + String.valueOf(col));
-                s.setStatus("FREE");
-                repo.save(s);
+                String code = row + String.valueOf(col);
+                if (seatRepo.findByShowtimeIdAndSeatCode(showtimeId, code).isEmpty()) {
+                    SeatStatus s = new SeatStatus();
+                    Showtime st = showtimeRepo.findById(showtimeId)
+                            .orElseThrow(() -> new RuntimeException("SHOWTIME_NOT_FOUND"));
+                    s.setShowtime(st);
+                    s.setSeatCode(code);
+                    s.setStatus(SeatState.DISPONIBLE);
+                    seatRepo.save(s);
+                }
             }
         }
     }
 
+    private Long parseId(String idStr){
+        try { return Long.valueOf(idStr); }
+        catch (Exception e){ throw new RuntimeException("INVALID_ID: " + idStr); }
+    }
 }

@@ -11,27 +11,18 @@ import org.springframework.stereotype.Service;
 public class MenuItemService {
     private final MenuItemRepository repo;
 
-    @Autowired
     public MenuItemService(MenuItemRepository repo) {
         this.repo = repo;
-        initSampleData();
-    }
-
-    private void initSampleData() {
-        save(new MenuItem("Combo Interstellar", "Hamburguesa temática + bebida", "COMBO",
-                42000, 20, true, "https://img/combointerstellar.png"));
-        save(new MenuItem("Gaseosa Grande", "Bebida 22oz", "BEBIDA",
-                9000, 100, true, "https://img/gaseosa.png"));
-        save(new MenuItem("Palomitas Caramelo", "Dulces, tamaño mediano", "SNACK",
-                16000, 60, true, "https://img/palomitas.png"));
     }
 
     public MenuItem save(MenuItem item) {
+        // forzamos categoria en minúscula para coincidir con ENUM de BD
+        if (item.getCategoria() != null) item.setCategoria(item.getCategoria().toLowerCase());
         return repo.save(item);
     }
 
     public MenuItem findById(String id) {
-        return repo.findById(id);
+        return repo.findById(Long.valueOf(id)).orElse(null);
     }
 
     public List<MenuItem> findAll() {
@@ -39,14 +30,33 @@ public class MenuItemService {
     }
 
     public MenuItem update(MenuItem item) {
-        return repo.update(item);
+        if (item.getCategoria() != null) item.setCategoria(item.getCategoria().toLowerCase());
+        return repo.save(item);
     }
 
     public void deleteById(String id) {
-        repo.deleteById(id);
+        repo.deleteById(Long.valueOf(id));
     }
 
-    public List<MenuItem> buscarPorFiltros(String nombre, String categoria, Boolean activo, Double precioMin, Double precioMax) {
-        return repo.buscarPorFiltros(nombre, categoria, activo, precioMin, precioMax);
+    public List<MenuItem> buscarPorFiltros(String nombre, String categoria, Boolean activo,
+                                           Integer precioMin, Integer precioMax) {
+        String nombreSafe = (nombre == null) ? null : nombre.toLowerCase();
+        String categoriaSafe = (categoria == null) ? null : categoria.toLowerCase();
+
+        return repo.findAll().stream().filter(item -> {
+            boolean byNombre = (nombreSafe == null) ||
+                    (item.getNombre() != null && item.getNombre().toLowerCase().contains(nombreSafe));
+
+            boolean byCategoria = (categoriaSafe == null) ||
+                    (item.getCategoria() != null && item.getCategoria().equalsIgnoreCase(categoriaSafe));
+
+            // activo es @Transient; si lo quieres filtrar, vale solo en lo que trae la app
+            boolean byActivo = (activo == null) || (item.isActivo() == activo);
+
+            boolean byMin = (precioMin == null) || (item.getPrecio() != null && item.getPrecio() >= precioMin);
+            boolean byMax = (precioMax == null) || (item.getPrecio() != null && item.getPrecio() <= precioMax);
+
+            return byNombre && byCategoria && byActivo && byMin && byMax;
+        }).toList();
     }
 }

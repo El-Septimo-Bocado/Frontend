@@ -32,3 +32,33 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# =========================
+# 🔐 Variables de entorno
+# =========================
+.env
+.env.*
+*.env
+*.env.*
+
+# (por si guardas secretos/llaves)
+*.secret
+*.secrets
+*.key
+*.pem
+*.p12
+*.keystore
+
+# =========================
+# 📝 Logs y dumps
+# =========================
+logs/
+*.log
+*.sql      # si generas dumps locales, opcional
+
+# =========================
+# 🗂️ Archivos de SO
+# =========================
+.DS_Store
+Thumbs.db
+

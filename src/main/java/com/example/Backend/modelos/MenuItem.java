@@ -1,96 +1,65 @@
 package com.example.Backend.modelos;
 
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
+@Entity
+@Table(name = "menu")
 public class MenuItem {
-    private String id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false) // nombre VARCHAR(200) NOT NULL
     private String nombre;
+
+    @Column(columnDefinition = "TEXT") // descripcion TEXT
     private String descripcion;
-    private String categoria;
-    private double precio;
-    private int stock;
-    private boolean activo;
+
+    @Column(nullable = false)// precio INT NOT NULL
+    private Integer precio;
+
+    @Column(name = "imagen") // imagen VARCHAR(500)
     private String imageUrl;
 
-    public MenuItem() {
-        this.id = UUID.randomUUID().toString();
-        this.activo = true;
-    }
+    /**
+     * En BD: ENUM('plato','postre','bebida')
+     * Aquí lo manejamos como String. Usar valores en minúscula para coincidir con la BD.
+     */
+    @Column(nullable = false)
+    private String categoria;
 
-    public MenuItem(String nombre, String descripcion, String categoria,
-                    double precio, int stock, boolean activo, String imageUrl) {
-        this.id = UUID.randomUUID().toString();
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.categoria = categoria;
-        this.precio = precio;
-        this.stock = stock;
-        this.activo = activo;
-        this.imageUrl = imageUrl;
-    }
+    // Estos dos no existen en la BD: quedan como datos calculados/temporales
+    @Transient
+    private int stock;
 
-    public String getId() {
-        return id;
-    }
+    @Transient
+    private boolean activo = true;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    // ===== getters/setters =====
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    public Integer getPrecio() { return precio; }
+    public void setPrecio(Integer precio) { this.precio = precio; }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public String getCategoria() {
-        return categoria;
-    }
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = (categoria == null) ? null : categoria.toLowerCase(); }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public boolean isActivo() {
-        return activo;
-    }
-
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 }
