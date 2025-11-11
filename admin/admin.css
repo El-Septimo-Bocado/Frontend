@@ -1,0 +1,150 @@
+/*Colores*/
+:root {
+  --color-fondo: #1e1e1e;       /* Fondo gris oscuro*/
+  --color-navbar: #2b1b0f;      /* Marrón oscuro*/
+  --color-acento: #ff9d00;      /* Naranja brillante*/
+  --color-acento-sec: #b22222;  /* Rojo vino*/
+  --color-texto: #ffffff;       /* Texto principal */
+  --color-subtexto: #cccccc;    /* Texto secundario */
+}
+
+/*Reset*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-navbar);
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-acento);
+  text-decoration: none;
+  transition: transform 0.3s;
+}
+
+.navbar .logo:hover {
+  transform: scale(1.1);
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: var(--color-texto);
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+  color: var(--color-acento);
+}
+
+/* Cartelera */
+.cartelera {
+  padding: 40px 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columnas */
+  gap: 25px;
+  justify-items: center;
+}
+
+.tarjeta {
+  background-color: var(--color-navbar);
+  border: 1px solid var(--color-acento);
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  color: var(--color-texto);
+  text-decoration: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 100%;
+  max-width: 220px;
+  position: relative;
+}
+
+.tarjeta:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.tarjeta img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.tarjeta h2 {
+  margin: 15px 10px;
+  font-size: 1.1rem;
+  color: var(--color-texto);
+}
+
+.etiqueta {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--color-acento);
+  color: var(--color-fondo);
+  padding: 5px 10px;
+  font-weight: bold;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.etiquetaproximamente {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #74859F;
+  color: var(--color-fondo);
+  padding: 5px 10px;
+  font-weight: bold;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+
+/* Footer */
+footer {
+  background: var(--color-navbar);
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+  color: var(--color-subtexto);
+  font-size: 14px;
+}
+
+/*Para que quede el footer pegado al final de la pagina*/
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  margin-top: auto;
+}
