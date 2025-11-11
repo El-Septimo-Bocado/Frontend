@@ -1,25 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
-    <link rel="stylesheet" href="admin.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador - Gestión</title>
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <!-- Barra de Navegacion-->
+  <!-- Barra de Navegación -->
   <header class="navbar">
-  <a href="../principal/index.html" class="logo">
-    <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
-  </a>
-  <nav>
-    <ul>
-      <li><a href="../principal/index.html">Inicio</a></li>
-      <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
-      <li><a href="../menu/menu.html">Menu</a></li>
-      <li><a href="../eventos/eventos.html">Eventos</a></li>
-      <li><a href="../login/login.html">Inicia Sesion</a></li>
-      <li><a href="../contacto/contacto.html">Contacto</a></li>
-    </ul>
-  </nav>
-</header>
+    <a href="../principal/index.html" class="logo">
+      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+    </a>
+    <nav>
+      <ul>
+        <li><a href="../principal/index.html">Inicio</a></li>
+        <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+        <li><a href="../menu/menu.html">Menu</a></li>
+        <li><a href="../eventos/eventos.html">Eventos</a></li>
+        <li><a href="../login/login.html">Inicia Sesion</a></li>
+        <li><a href="../contacto/contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+
+    <header class="topbar">
+      <input type="text" placeholder="Buscar películas, comidas o bebidas..." />
+      <button class="btn-update">Actualizar</button>
+      <a href="../principal/index.html" class="btn-home">Ir a inicio</a>
+    </header>
+
+    <section class="panel">
+      <h2>Panel de Administración</h2>
+
+      <div class="admin-grid">
+        <!-- Gestión Películas -->
+        <div class="card peliculas">
+          <header>
+            <h3>Gestión de Películas</h3>
+            <button class="btn-primary">Nueva Película</button>
+          </header>
+          <input type="text" placeholder="Buscar películas..." class="input-search" />
+          <table>
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Duración</th>
+                <th>Clasificación</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Gestión Menú  -->
+        <div class="card menu">
+          <header>
+            <h3>Gestión del Menú</h3>
+            <div>
+              <button class="btn-primary">Nuevo Alimento</button>
+              <button class="btn-primary-light">Nueva Bebida</button>
+            </div>
+          </header>
+          <input type="text" placeholder="Buscar en el menú..." class="input-search" />
+
+          <div class="productos">
+            <!-- Productos del menú se insertarán aquí -->
+          </div>
+        </div>
+
+        <!-- Edición Película -->
+        <div class="card form-edicion">
+          <h3>Editar Película</h3>
+          <form>
+            <label>Título</label>
+            <input type="text" />
+
+            <label>Director</label>
+            <input type="text" />
+
+            <label>Duración</label>
+            <input type="number" />
+
+            <label>Sinopsis</label>
+            <textarea></textarea>
+
+            <label>Estado</label>
+            <div class="radios">
+              <label><input type="radio" name="estado"> Activa</label>
+              <label><input type="radio" name="estado"> Próximamente</label>
+              <label><input type="radio" name="estado"> Inactiva</label>
+            </div>
+
+            <button class="btn-primary">Guardar Cambios</button>
+          </form>
+        </div>
+
+      </div>
+    </section>
+  </main>
+</body>
+</html>
