@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-  <!-- Barra de Navegación -->
+
   <header class="navbar">
     <a href="../principal/index.html" class="logo">
       <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
@@ -24,11 +24,10 @@
     </nav>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL -->
   <main class="main-content">
 
     <header class="topbar">
-      <input type="text" placeholder="Buscar películas, comidas o bebidas..." />
+      <input type="text" placeholder="Buscar películas, comidas o bebidas..." class="input-search-top" />
       <button class="btn-update">Actualizar</button>
       <a href="../principal/index.html" class="btn-home">Ir a inicio</a>
     </header>
@@ -37,72 +36,281 @@
       <h2>Panel de Administración</h2>
 
       <div class="admin-grid">
-        <!-- Gestión Películas -->
-        <div class="card peliculas">
-          <header>
-            <h3>Gestión de Películas</h3>
-            <button class="btn-primary">Nueva Película</button>
-          </header>
-          <input type="text" placeholder="Buscar películas..." class="input-search" />
-          <table>
-            <thead>
-              <tr>
-                <th>Título</th>
-                <th>Duración</th>
-                <th>Clasificación</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
+
+        <div class="card form-crear">
+          <div class="card-header">
+            <h3>Crear Nueva Película</h3>
+          </div>
+          <form id="formCrearPelicula" class="admin-form">
+            
+            <div class="form-row">
+              <div class="form-group" style="flex: 2;">
+                <label for="peliculaTitulo">Título</label>
+                <input type="text" id="peliculaTitulo" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="peliculaDuracion">Duración (min)</label>
+                <input type="number" id="peliculaDuracion" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="peliculaClasificacion">Clasificación</label>
+                <input type="text" id="peliculaClasificacion" required>
+              </div>
+              <div class="form-group">
+                <label for="peliculaEstado">Estado</label>
+                <select id="peliculaEstado">
+                  <option value="Activa">Activa</option>
+                  <option value="Proximamente">Próximamente</option>
+                  <option value="Inactiva">Inactiva</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="peliculaReparto">Reparto</label>
+              <input type="text" id="peliculaReparto" placeholder="Ej: Actor 1, Actor 2" required>
+            </div>
+
+            <div class="form-group">
+              <label for="peliculaFecha">Fecha de estreno</label>
+              <input type="date" id="peliculaFecha" required>
+            </div>
+
+            <div class="form-group">
+              <label for="peliculaSinopsis">Sinopsis</label>
+              <textarea id="peliculaSinopsis" required rows="4"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Agregar Película</button>
+            </div>
+
+          </form>
         </div>
 
-        <!-- Gestión Menú  -->
-        <div class="card menu">
-          <header>
-            <h3>Gestión del Menú</h3>
-            <div>
-              <button class="btn-primary">Nuevo Alimento</button>
-              <button class="btn-primary-light">Nueva Bebida</button>
-            </div>
-          </header>
-          <input type="text" placeholder="Buscar en el menú..." class="input-search" />
-
-          <div class="productos">
-            <!-- Productos del menú se insertarán aquí -->
+        <div class="card peliculas">
+          <div class="card-header">
+            <h3>Cartelera Registrada</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Duración</th>
+                  <th>Clasif.</th>
+                  <th>Estado</th>
+                  <th>Reparto</th>
+                  <th>Estreno</th>
+                </tr>
+              </thead>
+              <tbody id="tablaPeliculas">
+                <tr> 
+                  <td>Batman 2</td> 
+                  <td>120 min</td>
+                  <td>PG-13</td>
+                  <td>Activa</td>
+                  <td>Robert Downey Jr</td>
+                  <td>2012-12-10</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <!-- Edición Película -->
-        <div class="card form-edicion">
-          <h3>Editar Película</h3>
-          <form>
-            <label>Título</label>
-            <input type="text" />
-
-            <label>Director</label>
-            <input type="text" />
-
-            <label>Duración</label>
-            <input type="number" />
-
-            <label>Sinopsis</label>
-            <textarea></textarea>
-
-            <label>Estado</label>
-            <div class="radios">
-              <label><input type="radio" name="estado"> Activa</label>
-              <label><input type="radio" name="estado"> Próximamente</label>
-              <label><input type="radio" name="estado"> Inactiva</label>
+        <div class="card form-crear">
+          <div class="card-header">
+            <h3>Crear Nuevo Ítem del Menú</h3>
+          </div>
+          <form id="formCrearMenu" class="admin-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="menuSeccion">Sección</label>
+                <select id="menuSeccion">
+                  <option value="Comida">Comida</option>
+                  <option value="Bebida">Bebida</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="menuPrecio">Precio</label>
+                <input type="number" id="menuPrecio" required placeholder="$ 0.00">
+              </div>
             </div>
 
-            <button class="btn-primary">Guardar Cambios</button>
+            <div class="form-group">
+              <label for="menuNombre">Nombre</label>
+              <input type="text" id="menuNombre" required>
+            </div>
+
+            <div class="form-group">
+              <label for="menuDescripcion">Descripción</label>
+              <textarea id="menuDescripcion" required rows="3"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Agregar al Menú</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card menu">
+          <div class="card-header">
+            <h3>Menú Registrado</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Sección</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Precio</th>
+                </tr>
+              </thead>
+              <tbody id="tablaMenu">
+                <tr> 
+                  <td>Comida</td> 
+                  <td>Palomitas Grandes</td>
+                  <td>Palomitas con mantequilla</td>
+                  <td>$ 15.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card form-edicion">
+          <div class="card-header">
+            <h3>Editar Ítem del Menú</h3>
+          </div>
+          <form id="formEditarMenu" class="admin-form">
+            <div class="form-group">
+              <label for="selectMenuEditar">Seleccionar Ítem</label>
+              <select id="selectMenuEditar">
+                <option value="">-- Selecciona un item --</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="editMenuNombre">Nombre</label>
+              <input type="text" id="editMenuNombre">
+            </div>
+
+            <div class="form-group">
+              <label for="editMenuDescripcion">Descripción</label>
+              <textarea id="editMenuDescripcion" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="editMenuPrecio">Precio</label>
+              <input type="number" id="editMenuPrecio">
+            </div>
+            
+            <div class="form-group">
+              <label>Tipo</label>
+              <div class="radios">
+                <label><input type="radio" name="tipoMenu" value="Comida"> Comida</L>
+                <label><input type="radio" name="tipoMenu" value="Bebida"> Bebida</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btnGuardarMenu" class="btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card form-eliminar">
+          <div class="card-header">
+            <h3>Eliminar Ítem del Menú</h3>
+          </div>
+          <form id="formEliminarMenu" class="admin-form">
+            <div class="form-group">
+              <label for="selectMenuEliminar">Seleccionar Comida/Bebida</label>
+              <select id="selectMenuEliminar">
+                <option value="">-- Selecciona un item --</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="btnEliminarMenu" class="btn-primary-light">
+                Eliminar Ítem
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card form-edicion">
+          <div class="card-header">
+            <h3>Editar Película</h3>
+          </div>
+          <form id="formEditarPelicula" class="admin-form">
+            <div class="form-group">
+              <label for="selectPeliculaEditar">Seleccionar Película</label>
+              <select id="selectPeliculaEditar">
+                <option value="">-- Selecciona una película --</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="editTitulo">Título</label>
+              <input type="text" id="editTitulo">
+            </div>
+
+            <div class="form-group">
+              <label for="editDirector">Director</label>
+              <input type="text" id="editDirector">
+            </div>
+
+            <div class="form-group">
+              <label for="editDuracion">Duración</label>
+              <input type="number" id="editDuracion">
+            </div>
+
+            <div class="form-group">
+              <label for="editSinopsis">Sinopsis</label>
+              <textarea id="editSinopsis" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Estado</label>
+              <div class="radios">
+                <label><input type="radio" name="estado" value="Activa"> Activa</label>
+                <label><input type="radio" name="estado" value="Proximamente"> Próximamente</label>
+                <label><input type="radio" name="estado" value="Inactiva"> Inactiva</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btnGuardarPelicula" class="btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card form-eliminar">
+          <div class="card-header">
+            <h3>Eliminar Película</h3>
+          </div>
+          <form id="formEliminarPelicula" class="admin-form">
+            <div class="form-group">
+              <label for="deletePelicula">Seleccionar Película</label>
+              <select id="deletePelicula">
+                <option value="">-- Selecciona una película --</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="btnEliminarPelicula" class="btn-primary-light">
+                Eliminar Película
+              </button>
+            </div>
           </form>
         </div>
 
       </div>
     </section>
   </main>
+
 </body>
 </html>
