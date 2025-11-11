@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Recibo de Reserva</title>
-  <link rel="stylesheet" href="recibo.css">
+  <link rel="stylesheet" href="recibo.css"/>
 </head>
 <body>
-  <header class="navbar">
-    <a href="../principal/index.html" class="logo">
-      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
-    </a>
+<header class="navbar">
+  <a href="../principal/index.html" class="logo">
+    <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+  </a>
   <nav>
     <ul>
       <li><a href="../principal/index.html">Inicio</a></li>
@@ -23,47 +23,44 @@
   </nav>
 </header>
 
-  <main class="recibo-main">
-    <h1>🎟️ Recibo de Reservación</h1>
+<main class="recibo-main">
+  <h1>🎟️ Recibo de Reservación</h1>
 
-    <!-- Info de película -->
-    <section class="recibo-pelicula">
-      <img id="reciboPoster" src="" alt="Poster">
-      <div>
-        <h2 id="reciboTitulo">Película</h2>
-        <p><strong>Director:</strong> <span id="reciboDirector"></span></p>
-        <p><strong>Géneros:</strong> <span id="reciboGeneros"></span></p>
-        <p><strong>Duración:</strong> <span id="reciboDuracion"></span></p>
-      </div>
-    </section>
-
-    <!-- Detalles de la reserva -->
-    <section class="recibo-detalles">
-      <p><strong>Fecha:</strong> <span id="reciboFecha"></span></p>
-      <p><strong>Horario:</strong> <span id="reciboHorario"></span></p>
-      <p><strong>Asientos:</strong> <span id="reciboAsientos"></span></p>
-      <p><strong>Comidas:</strong> <span id="reciboComidas"></span></p>
-    </section>
-
-    <!-- Costos -->
-    <section class="recibo-costos">
-      <h3>Resumen de Pago</h3>
-      <p>Boletas: <span id="reciboBoletas"></span></p>
-      <p>Comida: <span id="reciboComida"></span></p>
-      <p>Cargo: <span id="reciboCargo"></span></p>
-      <p class="total">Total: <span id="reciboTotal"></span></p>
-    </section>
-
-    <div class="botones">
-      <button onclick="window.print()">🖨️ Imprimir</button>
-      <a href="../principal/index.html" class="btn-volver">Volver al inicio</a>
+  <section class="recibo-pelicula">
+    <img id="reciboPoster" src="" alt="Poster">
+    <div>
+      <h2 id="reciboTitulo">Película</h2>
+      <p><strong>Director:</strong> <span id="reciboDirector"></span></p>
+      <p><strong>Géneros:</strong> <span id="reciboGeneros"></span></p>
+      <p><strong>Duración:</strong> <span id="reciboDuracion"></span></p>
     </div>
-  </main>
+  </section>
 
-  <footer>
-    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
-  </footer>
+  <section class="recibo-detalles">
+    <p><strong>Fecha:</strong> <span id="reciboFecha"></span></p>
+    <p><strong>Horario:</strong> <span id="reciboHorario"></span></p>
+    <p><strong>Asientos:</strong> <span id="reciboAsientos"></span></p>
+    <p><strong>Comidas:</strong> <span id="reciboComidas"></span></p>
+  </section>
 
-  <script src="recibo.js"></script>
+  <section class="recibo-costos">
+    <h3>Resumen de Pago</h3>
+    <p>Boletas: <span id="reciboBoletas"></span></p>
+    <p>Comida:  <span id="reciboComida"></span></p>
+    <p>Cargo:   <span id="reciboCargo"></span></p>
+    <p class="total">Total: <span id="reciboTotal"></span></p>
+  </section>
+
+  <div class="botones">
+    <button onclick="window.print()">🖨️ Imprimir</button>
+    <a href="../principal/index.html" class="btn-volver">Volver al inicio</a>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
+</footer>
+
+<script src="recibo.js" defer></script>
 </body>
 </html>

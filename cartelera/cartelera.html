@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartelera</title>
-    <link rel="stylesheet" href="cartelera.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cartelera</title>
+  <link rel="stylesheet" href="cartelera.css"/>
+  <style>
+    /* (Opcional) mínimos por si tu CSS no tiene estas clases */
+    .cartelera { max-width: 1100px; margin: 40px auto; padding: 0 16px; }
+    .cartelera-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 20px; }
+    .tarjeta { position: relative; display: block; background: #111; color: #fff; border-radius: 12px; overflow: hidden; text-decoration: none; box-shadow: 0 6px 16px rgba(0,0,0,.2); }
+    .tarjeta img { width: 100%; height: 260px; object-fit: cover; display:block; }
+    .tarjeta h2 { font-size: 1rem; font-weight: 600; padding: 10px 12px 12px; line-height: 1.2; color: #fff; }
+    .etiqueta, .etiquetaproximamente { position: absolute; top: 10px; left: 10px; padding: 6px 10px; font-size: .8rem; border-radius: 999px; font-weight: 700; }
+    .etiqueta { background: #22c55e; color: #052e13; }              /* Estreno */
+    .etiquetaproximamente { background: #f59e0b; color: #3b2502; }  /* Próxigit add .mamente */
+    .rating { color: #ffd54a; padding: 0 12px 12px; font-size: .95rem; }
+    .placeholder { width:100%; height:260px; background:#222; display:flex; align-items:center; justify-content:center; color:#777; }
+  </style>
 </head>
 <body>
-    <!-- Barra de Navegacion-->
+  <!-- Barra de Navegación -->
   <header class="navbar">
   <a href="../principal/index.html" class="logo">
     <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
@@ -24,85 +37,114 @@
   </nav>
 </header>
   <!-- Cartelera -->
-    <div class="cartelera">
-      <h2 style="grid-column: 1 / -1; text-align: center; margin-bottom: 30px;">En cartelera y próximamente</h2>
-        <!-- Tarjeta Kill Bill Vol. 2 -->
-        <a href="../detalles/KillBill2Detalles.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/kill-bill-2-poster.jpg" alt="Kill Bill Vol. 2">
-            <h2>Kill Bill Vol. 2</h2>
-        </a>
-        <!-- Tarjeta Volver al Futuro 2 -->
-        <a href="../detalles/backtothefuture2detalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/back-future-2-poster.jpg" alt="Volver al Futuro 2">
-            <h2>Volver al Futuro 2</h2>
-        </a>
+  <div class="cartelera">
+    <h2 style="grid-column:1 / -1; text-align:center; margin-bottom: 30px;">
+      En cartelera y próximamente
+    </h2>
 
-        <!-- Tarjeta The Social Network -->
-        <a href="../detalles/thesocialnetworkdetalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/social-network-poster.jpg" alt="The Social Network">
-            <h2>The Social Network</h2>
-        </a>
-
-        <!-- Tarjeta Star Wars Episodio III -->
-        <a href="../detalles/starwars3detalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/star-wars-3-poster.jpg" alt="Star Wars Episodio III">
-            <h2>Star Wars: Episodio III</h2>
-        </a>
-        <!-- Tarjeta Saw V -->
-        <a href="../detalles/sawvdetalle.html" class="tarjeta">
-            <div class="etiqueta">Estreno</div>
-            <img src="../poster/saw-v-poster.jpg" alt="Saw V">
-            <h2>Saw V</h2>
-        </a>
-                <!-- Tarjeta Mortal Kombat II -->
-        <a href="../detalles/mortalkombat2detalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/mortal-kombat-2-poster.jpg" alt="Mortal Kombat II ">
-            <h2>Mortal Kombat II</h2>
-        </a>
-
-             <!-- Tarjeta Demon Slayer -->
-        <a href="../detalles/demonslayerdetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/demon-slayer-poster.jpg" alt="Demon Slayer The Movie: Infinity Castle ">
-            <h2>Demon Slayer: Castillo Infinito</h2>
-        </a>
-
-        <!-- Tarjeta Avengers Doomsday -->
-        <a href="../detalles/avengersdoomsdaydetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/avenger-doomsday-poster.jpg" alt="Avengers: Doomsday ">
-            <h2>Avengers: Doomsday</h2>
-        </a>
-
-        <!-- Tarjeta Batman Azteca -->
-        <a href="../detalles/batmanaztecadetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/batman-azteca-poster.jpg" alt="Batman Azteca: Choque de imperios">
-            <h2>Batman Azteca: Choque de imperios</h2>
-        </a>
-
-         <!-- Tarjeta Spiderman Brand New Day -->
-        <a href="../detalles/spiderman4detalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/spider-brand-poster.jpg" alt="Spider-Man: Brand New Day">
-            <h2>Spider-Man: Brand New Day</h2>
-        </a>
-
-           <!-- Tarjeta Supergirl -->
-        <a href="../detalles/supergirldetalle.html" class="tarjeta">
-            <div class="etiquetaproximamente">Proximamente</div>
-            <img src="../poster/supergirl-poster.jpg" alt="Supergirl">
-            <h2>Supergirl</h2>
-        </a>
+    <div id="cartelera-grid" class="cartelera-grid">
+      <!-- Aquí se inyectan las tarjetas -->
     </div>
+  </div>
+
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
   </footer>
+
+  <!-- Script: cargar películas desde el backend -->
+  <script>
+    (function () {
+      const API = "http://localhost:8080/api/movies";
+
+      // Mapea los campos del backend a lo que usamos en la UI
+      const mapMovie = (m) => ({
+        id: m.id,
+        titulo: m.titulo || m.title || "Película",
+        // Si tienes coverArt (carátula tipo CD) úsalo; si no, cae a poster
+        imagen: m.coverArt || m.poster || "",
+        poster: m.poster || "",
+        fondo: m.fondo || "",
+        director: m.director || "",
+        generos: m.generos || "",
+        duracion: m.duracion || "",
+        rating: typeof m.rating === "number" ? m.rating : null,
+        activo: m.activo !== false // por defecto true si no viene
+      });
+
+      function stars(r) {
+        if (typeof r !== "number") return "—";
+        const full = Math.floor(r);
+        const half = (r - full) >= 0.5 ? 1 : 0;
+        const empty = 5 - full - half;
+        return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
+      }
+
+      function cardHTML(movie) {
+        const etiqueta = movie.activo
+          ? `<div class="etiqueta">Estreno</div>`
+          : `<div class="etiquetaproximamente">Próximamente</div>`;
+
+        const img = movie.imagen
+          ? `<img src="${movie.imagen}" alt="${movie.titulo.replace(/"/g,'&quot;')}">`
+          : `<div class="placeholder">Sin imagen</div>`;
+
+        // Construye el payload para reservación
+        const pm = encodeURIComponent(JSON.stringify({
+          titulo   : movie.titulo,
+          poster   : movie.poster || movie.imagen,
+          fondo    : movie.fondo,
+          director : movie.director,
+          generos  : movie.generos,
+          duracion : movie.duracion
+        }));
+
+        return `
+          <a href="../reservas/reservacion.html#pm=${pm}" class="tarjeta">
+            ${etiqueta}
+            ${img}
+            <h2>${movie.titulo}</h2>
+            <div class="rating">${stars(movie.rating)}</div>
+          </a>
+        `;
+      }
+
+      function render(list) {
+        const grid = document.getElementById("cartelera-grid");
+        if (!grid) return;
+
+        if (!list.length) {
+          grid.innerHTML = `<p style="opacity:.7;">No hay películas para mostrar.</p>`;
+          return;
+        }
+        grid.innerHTML = list.map(cardHTML).join("");
+      }
+
+      fetch(API)
+        .then(r => {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(data => {
+          const movies = Array.isArray(data) ? data.map(mapMovie) : [];
+          // Puedes ordenar si quieres: primero activas (en cartelera), luego próximas
+          const ordenadas = [
+            ...movies.filter(m => m.activo),
+            ...movies.filter(m => !m.activo)
+          ];
+          render(ordenadas);
+        })
+        .catch(err => {
+          console.error("[cartelera] error cargando /api/movies:", err);
+          const grid = document.getElementById("cartelera-grid");
+          if (grid) {
+            grid.innerHTML = `
+              <p style="color:#b00020;">No pude cargar la cartelera desde ${API}</p>
+              <p style="opacity:.7;">Verifica que el backend está corriendo y CORS está habilitado.</p>
+            `;
+          }
+        });
+    })();
+  </script>
 </body>
 </html>
