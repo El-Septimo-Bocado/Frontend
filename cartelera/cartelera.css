@@ -1,14 +1,14 @@
-/*Colores*/
+/* ======== COLORES ======== */
 :root {
-  --color-fondo: #1e1e1e;       /* Fondo gris oscuro*/
-  --color-navbar: #2b1b0f;      /* Marrón oscuro*/
-  --color-acento: #ff9d00;      /* Naranja brillante*/
-  --color-acento-sec: #b22222;  /* Rojo vino*/
-  --color-texto: #ffffff;       /* Texto principal */
-  --color-subtexto: #cccccc;    /* Texto secundario */
+  --color-fondo: #1e1e1e;
+  --color-navbar: #2b1b0f;
+  --color-acento: #ff9d00;
+  --color-acento-sec: #b22222;
+  --color-texto: #ffffff;
+  --color-subtexto: #cccccc;
 }
 
-/*Reset*/
+/* ======== RESET ======== */
 * {
   margin: 0;
   padding: 0;
@@ -16,135 +16,159 @@
 }
 
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
   background: var(--color-fondo);
   color: var(--color-texto);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Navbar */
+/* ======== NAVBAR ======== */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--color-navbar);
+  background: var(--color-navbar);
   padding: 15px 30px;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-.navbar .logo {
-  font-weight: bold;
-  font-size: 20px;
-  color: var(--color-acento);
-  text-decoration: none;
-  transition: transform 0.3s;
+.navbar .logo img {
+  height: 70px;
+  transition: transform .3s;
 }
 
-.navbar .logo:hover {
+.navbar .logo img:hover {
   transform: scale(1.1);
 }
 
 .navbar ul {
-  list-style: none;
   display: flex;
   gap: 25px;
+  list-style: none;
 }
 
 .navbar ul li a {
   text-decoration: none;
-  color: var(--color-texto);
   font-weight: bold;
-  transition: 0.3s;
+  color: var(--color-texto);
+  transition: .3s;
 }
 
 .navbar ul li a:hover {
   color: var(--color-acento);
 }
 
-/* Cartelera */
+/* ======== CARTELERA ======== */
 .cartelera {
-  padding: 40px 20px;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.cartelera-titulo {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.cartelera-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columnas */
-  gap: 25px;
-  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+  gap: 20px;
 }
 
 .tarjeta {
-  background-color: var(--color-navbar);
+  background: var(--color-navbar);
   border: 1px solid var(--color-acento);
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  text-align: center;
-  color: var(--color-texto);
   text-decoration: none;
-  transition: transform 0.3s, box-shadow 0.3s;
-  width: 100%;
-  max-width: 220px;
+  color: var(--color-texto);
   position: relative;
+  transition: transform .3s, box-shadow .3s;
+  box-shadow: 0 6px 16px rgba(0,0,0,.2);
 }
 
 .tarjeta:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 20px rgba(0,0,0,.5);
 }
 
 .tarjeta img {
   width: 100%;
-  height: auto;
+  height: 260px;
+  object-fit: cover;
   display: block;
 }
 
 .tarjeta h2 {
-  margin: 15px 10px;
-  font-size: 1.1rem;
-  color: var(--color-texto);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 12px 12px;
+  line-height: 1.2;
+}
+
+.rating {
+  color: #ffd54a;
+  padding: 0 12px 12px;
+  font-size: .95rem;
+}
+
+/* ======== ETIQUETAS ======== */
+.etiqueta, .etiquetaproximamente {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  font-size: .8rem;
+  font-weight: 700;
+  border-radius: 999px;
 }
 
 .etiqueta {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: var(--color-acento);
-  color: var(--color-fondo);
-  padding: 5px 10px;
-  font-weight: bold;
-  border-radius: 5px;
-  font-size: 0.9rem;
+  background: #22c55e;
+  color: #052e13;
 }
 
 .etiquetaproximamente {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #74859F;
-  color: var(--color-fondo);
-  padding: 5px 10px;
-  font-weight: bold;
-  border-radius: 5px;
-  font-size: 0.9rem;
+  background: #f59e0b;
+  color: #3b2502;
 }
 
+/* ======== ESTADOS ======== */
+.placeholder {
+  width: 100%;
+  height: 260px;
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+}
 
-/* Footer */
+.msg-vacio {
+  opacity: .7;
+}
+
+.error {
+  color:#b00020;
+  font-weight: bold;
+}
+
+.error-sub {
+  opacity:.7;
+}
+
+/* ======== FOOTER ======== */
 footer {
   background: var(--color-navbar);
   text-align: center;
   padding: 15px;
-  margin-top: 40px;
-  color: var(--color-subtexto);
-  font-size: 14px;
-}
-
-/*Para que quede el footer pegado al final de la pagina*/
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-footer {
   margin-top: auto;
+  font-size: 14px;
+  color: var(--color-subtexto);
 }
