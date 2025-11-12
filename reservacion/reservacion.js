@@ -27,7 +27,6 @@ function parsePM() {
 
 async function ensureMovieId(meta) {
   if (meta.movieId) return meta.movieId;
-  // Compat: buscar por título si no viene movieId
   const res = await fetch(`${API_BASE}/api/movies`);
   const movies = await res.json();
   const found = movies.find(m => (m.titulo || "").toLowerCase() === (meta.titulo||"").toLowerCase());
@@ -35,17 +34,11 @@ async function ensureMovieId(meta) {
 }
 
 function paintMeta(meta) {
-  const posterEl = $("#moviePoster");
-  const titleEl  = $("#movieTitle");
-  const dirEl    = $("#movieDirector");
-  const genEl    = $("#movieGenres");
-  const durEl    = $("#movieDuration");
-
-  if (titleEl) titleEl.textContent = meta.titulo || "Película";
-  if (dirEl)   dirEl.textContent   = meta.director || "—";
-  if (genEl)   genEl.textContent   = meta.generos  || "—";
-  if (durEl)   durEl.textContent   = meta.duracion || "—";
-  if (posterEl && meta.poster) posterEl.src = meta.poster;
+  $("#movieTitle").textContent = meta.titulo || "Película";
+  $("#movieDirector").textContent = meta.director || "—";
+  $("#movieGenres").textContent = meta.generos || "—";
+  $("#movieDuration").textContent = meta.duracion || "—";
+  if ($("#moviePoster") && meta.poster) $("#moviePoster").src = meta.poster;
 
   const main = $(".reserva-main");
   if (main && meta.fondo) {
@@ -59,10 +52,10 @@ function paintMeta(meta) {
 // ===============================
 // 2) Carga de horarios, asientos y selección
 // ===============================
-function buildSeatGrid() {
+function buildSeatGrid(filas=6, columnas=8) {
   const cont = $("#asientos");
   cont.innerHTML = "";
-  for (let r=0; r<6; r++) {
+  for (let r=0; r<filas; r++) {
     const rowLetter = String.fromCharCode("A".charCodeAt(0)+r);
     const fila = document.createElement("div");
     fila.className = "fila";
@@ -70,7 +63,7 @@ function buildSeatGrid() {
     span.className = "letra-fila";
     span.textContent = rowLetter;
     fila.appendChild(span);
-    for (let c=1; c<=8; c++) {
+    for (let c=1; c<=columnas; c++) {
       const btn = document.createElement("button");
       btn.className = "asiento";
       btn.textContent = `${rowLetter}${c}`;
@@ -90,32 +83,32 @@ async function loadShowtimes(movieId) {
 
   wrap.innerHTML = "";
   data.forEach(st => {
+    const fecha = new Date(st.fechaHora);
+    const etiqueta = `${fecha.toLocaleDateString("es-CO", { weekday:"short", day:"2-digit", month:"short" })} ${fecha.toLocaleTimeString("es-CO", { hour:"2-digit", minute:"2-digit" })} — ${st.sala}`;
     const b = document.createElement("button");
     b.className = "btn-horario";
-    b.textContent = st.etiqueta || new Date(st.startAt).toLocaleString("es-CO");
+    b.textContent = etiqueta;
     b.dataset.id = st.id;
-    b.addEventListener("click", () => selectShowtime(st.id, b));
+    b.addEventListener("click", () => selectShowtime(st, b));
     wrap.appendChild(b);
   });
   return data;
 }
 
-let selectedShowtimeId = null;
+let selectedShowtime = null;
 let selectedSeats = new Set();
 let total = 0;
 
-async function selectShowtime(showtimeId, btn) {
+async function selectShowtime(st, btn) {
   $$(".btn-horario").forEach(b => b.classList.remove("seleccionado"));
   btn.classList.add("seleccionado");
-  selectedShowtimeId = showtimeId;
+  selectedShowtime = st;
   selectedSeats.clear();
   total = 0;
   updateTotal();
 
-  // Cargar mapa desde backend
-  await loadSeatsFromBackend(showtimeId);
+  await loadSeatsFromBackend(st.id, st.filas, st.columnas);
 
-  // Re-bind clicks para selección
   $$(".asiento").forEach(a => {
     a.addEventListener("click", () => {
       if (a.classList.contains("ocupado") || a.dataset.locked === "1") return;
@@ -132,16 +125,16 @@ async function selectShowtime(showtimeId, btn) {
   });
 }
 
-async function loadSeatsFromBackend(showtimeId) {
-  buildSeatGrid();
+async function loadSeatsFromBackend(showtimeId, filas=6, columnas=8) {
+  buildSeatGrid(filas, columnas);
   const res = await fetch(`${API_BASE}/api/showtimes/${encodeURIComponent(showtimeId)}/seats`);
   if (!res.ok) return;
   const data = await res.json();
-  // Marcar ocupados/held
+
   data.forEach(s => {
     const btn = findSeatButton(s.seatCode);
     if (!btn) return;
-    if (s.status === "SOLD" || s.status === "HELD") {
+    if (s.status === "OCUPADO" || s.status === "RESERVADO") {
       btn.classList.add("ocupado");
       btn.dataset.locked = "1";
     }
@@ -161,7 +154,7 @@ function updateTotal() {
 // 3) Confirmar: HOLD y pasar a comidas
 // ===============================
 async function confirmAndHold() {
-  if (!selectedShowtimeId || selectedSeats.size === 0) {
+  if (!selectedShowtime || selectedSeats.size === 0) {
     const mod = $("#modal-error");
     const msg = $("#mensaje-error");
     if (mod && msg) { msg.textContent = "Debes seleccionar un horario y al menos un asiento."; mod.checked = true; }
@@ -169,25 +162,22 @@ async function confirmAndHold() {
     return;
   }
 
-  // HOLD
-  const res = await fetch(`${API_BASE}/api/showtimes/${encodeURIComponent(selectedShowtimeId)}/seats/hold`, {
+  const res = await fetch(`${API_BASE}/api/showtimes/${selectedShowtime.id}/seats/hold`, {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify({ seatCodes: Array.from(selectedSeats) })
   });
   if (!res.ok) { alert("No se pudo bloquear los asientos. Intenta de nuevo."); return; }
-  const hold = await res.json(); // {holdId, expiresAt}
+  const hold = await res.json();
 
-  // Guardar borrador y pasar a comidas
   let draft = {};
   try { draft = JSON.parse(localStorage.getItem("reservaDraft") || "{}"); } catch {}
   draft.id         = draft.id || ("r_" + Date.now());
-  draft.showtimeId = selectedShowtimeId;
+  draft.showtimeId = selectedShowtime.id;
   draft.holdId     = hold.holdId;
   draft.holdExp    = hold.expiresAt;
   draft.asientos   = Array.from(selectedSeats);
   draft.fecha      = new Date().toLocaleDateString("es-CO");
-  draft.fechaLarga = new Date().toLocaleString("es-CO", { dateStyle:"medium", timeStyle:"short" });
   draft.horario    = $(`.btn-horario.seleccionado`)?.textContent?.trim() || "";
   draft.costos     = { boletas: total, comida: 0, cargo: 0, total };
   localStorage.setItem("reservaDraft", JSON.stringify(draft));
@@ -212,7 +202,6 @@ function wireCancel() {
 // Init
 // ===============================
 (async function init() {
-  // META
   const pm = parsePM() || {};
   const meta = {
     movieId : pm.movieId || null,
@@ -225,14 +214,12 @@ function wireCancel() {
   };
   paintMeta(meta);
 
-  // Persistir meta
   let draft = {};
   try { draft = JSON.parse(localStorage.getItem("reservaDraft") || "{}"); } catch {}
-  draft.meta     = { ...(draft.meta||{}), ...meta };
+  draft.meta = { ...(draft.meta||{}), ...meta };
   draft.pelicula = meta.titulo;
   localStorage.setItem("reservaDraft", JSON.stringify(draft));
 
-  // Asegurar movieId (si no vino en pm)
   const movieId = meta.movieId || await ensureMovieId(meta);
   if (!movieId) {
     alert("No pude identificar la película. Regresa a cartelera.");
@@ -240,13 +227,9 @@ function wireCancel() {
     return;
   }
 
-  // Horarios
   await loadShowtimes(movieId);
-
-  // Asientos grid inicial
   buildSeatGrid();
 
-  // Botones
   $("#btn-confirmar")?.addEventListener("click", confirmAndHold);
   wireCancel();
 })();
