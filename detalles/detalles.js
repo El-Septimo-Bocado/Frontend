@@ -1,123 +1,185 @@
+
 (function () {
-  const API_MOVIES = "http://localhost:8080/api/movies";
-  const API_SHOW   = "http://localhost:8080/api/showtimes";
+  const API_BASE = (window.Auth?.API_BASE) || "http://localhost:8080";
 
-  const qs = (s) => document.querySelector(s);
-  const setText = (sel, t) => { const el = qs(sel); if (el) el.textContent = t ?? ""; };
-  const setAttr = (sel, a, v) => { const el = qs(sel); if (el && v!=null) el.setAttribute(a, v); };
-  const setStyle = (sel, prop, val) => { const el = qs(sel); if (el) el.style.setProperty(prop, val); };
+  const qs = (sel) => document.querySelector(sel);
+  const setText = (sel, text) => { const el = qs(sel); if (el) el.textContent = (text ?? ""); };
+  const setAttr = (sel, attr, val) => { const el = qs(sel); if (el && val != null) el.setAttribute(attr, val); };
+  const setStyle = (sel, prop, val) => { const el = qs(sel); if (el && val) el.style.setProperty(prop, val); };
 
-  // ⭐ 0..5 a estrellitas (permite medios)
+  // ⭐ 0..5 → estrellitas (acepta medios)
   function stars(r) {
-    if (typeof r !== "number") return "—";
-    const full = Math.floor(r);
-    const half = (r - full) >= 0.5 ? 1 : 0;
+    const num = (typeof r === "number") ? r : (r ? Number(r) : NaN);
+    if (Number.isNaN(num)) return "—";
+    const full = Math.floor(num);
+    const half  = (num - full) >= 0.5 ? 1 : 0;
     const empty = 5 - full - half;
     return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
   }
 
-  // formato: "Mié 12/11 — 18:00 (Sala 2) • $20.000"
-  function fmtShowtime(s) {
-    const dt = new Date(s.fechaHora);
-    const dia = dt.toLocaleDateString("es-CO", { weekday: "short" });
-    const f   = dt.toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit" });
-    const h   = dt.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", hour12: false });
-    const sala= s.sala || "Sala";
-    const price = (s.basePrice!=null) ? ` • $${(s.basePrice).toLocaleString("es-CO")}` : "";
-    return `${dia} ${f} — ${h} (${sala})${price}`;
+  function parsePM() {
+    if (location.hash.startsWith("#pm=")) {
+      try {
+        const raw = decodeURIComponent(location.hash.slice(4));
+        const obj = JSON.parse(raw);
+        history.replaceState(null, "", location.pathname + location.search);
+        return obj;
+      } catch {}
+    }
+    try { return JSON.parse(localStorage.getItem("pendingMovie") || "null"); } catch {}
+    return null;
   }
 
   async function fetchMovieById(id) {
-    const r = await fetch(`${API_MOVIES}/${id}`);
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return await r.json();
+    const res = await fetch(`${API_BASE}/api/movies/${id}`);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return await res.json();
   }
 
-  async function fetchShowtimes(movieId) {
-    const r = await fetch(`${API_SHOW}?movieId=${encodeURIComponent(movieId)}`);
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return await r.json();
+  // Para cuando venimos sin id pero con título (busca por título)
+  async function ensureMovieIdByTitle(title) {
+    if (!title) return null;
+    const res = await fetch(`${API_BASE}/api/movies`);
+    if (!res.ok) return null;
+    const all = await res.json();
+    const found = (Array.isArray(all) ? all : []).find(m =>
+      (m.titulo || "").toLowerCase() === title.toLowerCase()
+    );
+    return found?.id || null;
   }
 
-  function fillMovie(m) {
-    const titulo   = m.titulo || "Película";
-    const poster   = m.caratula || m.poster || "";
+  function wireReserveButton(movieMeta) {
+    const btn = document.querySelector(".btn-reservar");
+    if (!btn) return;
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const meta = {
+        movieId:  movieMeta.id || movieMeta.movieId || null,
+        titulo:   movieMeta.titulo || movieMeta.title || "Película",
+        poster:   movieMeta.poster || movieMeta.caratula || "",
+        fondo:    movieMeta.fondo  || "",
+        director: movieMeta.director || "",
+        generos:  movieMeta.generos || "",
+        duracion: movieMeta.duracion || ""
+      };
+
+      // recordamos destino + meta para regresar tras login
+      if (window.Auth?.rememberReservation) {
+        Auth.rememberReservation(meta, "../reservacion/reservacion.html");
+      } else {
+        localStorage.setItem("pendingMovie", JSON.stringify(meta));
+        localStorage.setItem("reservacionDestino", "../reservacion/reservacion.html");
+      }
+
+      // Si ya hay sesión → vamos directo con #pm
+      if (window.Auth?.requireLogin) {
+        try {
+          Auth.requireLogin(() => {
+            const pm = encodeURIComponent(JSON.stringify(meta));
+            window.location.href = `../reservacion/reservacion.html#pm=${pm}`;
+          });
+        } catch { /* redirigido a /auth/login.html */ }
+      } else {
+        // fallback sin módulo Auth
+        const pm = encodeURIComponent(JSON.stringify(meta));
+        window.location.href = `../auth/login.html#pm=${pm}`;
+      }
+    });
+  }
+
+  function fillDOM(m) {
+    const titulo   = m.titulo || m.title || "Película";
+    const poster   = m.poster || m.caratula || "";
     const fondo    = m.fondo || m.poster || "";
     const director = m.director || "";
     const generos  = m.generos || "";
     const duracion = m.duracion || "";
     const rating   = (typeof m.rating === "number") ? m.rating : (m.rating ? Number(m.rating) : null);
-    const desc     = m.descripcion || "";
+    const desc     = m.descripcion || m.description || m.sinopsis || "";
+    const activo   = (typeof m.activo === "boolean") ? m.activo : true;
 
     document.title = titulo;
     setStyle("main.detalle-pelicula", "--fondo-pelicula", fondo ? `url('${fondo}')` : "");
-    setAttr(".poster img", "src", poster);
-    setAttr(".poster img", "alt", `Poster ${titulo}`);
+    setAttr("#poster-img", "src", poster);
+    setAttr("#poster-img", "alt", `Poster ${titulo}`);
 
     setText("#titulo",  titulo);
     setText("#genero",  generos);
-    setText("#rating",  rating!=null ? `${stars(rating)} (${rating}/5)` : "—");
-    setText("#sinopsis",desc);
-    setText("#director",director);
-    setText("#duracion",duracion);
-    setText("#estado",  (m.activo!==false) ? "En cartelera" : "Próximo estreno");
+    setText("#rating",  (rating != null) ? `${stars(rating)} (${rating}/5)` : "—");
+    setText("#sinopsis", desc);
+    setText("#director", director || "—");
+    setText("#duracion", duracion || "—");
+    setText("#estado",   activo ? "En cartelera" : "Próximo estreno");
 
-    // prepara botón reservar para flujo de login → reservación
-    const btn = qs("#btn-reservar");
-    if (btn) {
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        // si el usuario presiona aquí sin seleccionar horario,
-        // lo mandamos a reservación con la movieId para que allá escoja un horario
-        location.href = `../reservacion/reservacion.html?movieId=${m.id}`;
-      });
-    }
+    wireReserveButton(m);
   }
 
-  function renderShowtimes(movie, list) {
-    const cont = qs("#horarios-grid");
+  async function loadShowtimes(movieId) {
+    const cont = document.getElementById("horarios-grid");
     if (!cont) return;
-    if (!Array.isArray(list) || list.length===0) {
-      cont.innerHTML = `<p style="opacity:.7">No hay horarios disponibles.</p>`;
-      return;
-    }
-    cont.innerHTML = list.map(s => `
-      <button class="horario"
-        data-id="${s.id}"
-        title="${new Date(s.fechaHora).toLocaleString('es-CO')}">
-        ${fmtShowtime(s)}
-      </button>
-    `).join("");
+    cont.innerHTML = "<em>Cargando horarios…</em>";
 
-    cont.querySelectorAll("button.horario").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const sid = btn.getAttribute("data-id");
-        // navega a reservación con movieId y showtimeId
-        location.href = `../reservacion/reservacion.html?movieId=${movie.id}&showtimeId=${sid}`;
-      });
-    });
+    try {
+      const res = await fetch(`${API_BASE}/api/showtimes?movieId=${encodeURIComponent(movieId)}`);
+      if (!res.ok) { cont.innerHTML = "<em>Error cargando horarios</em>"; return; }
+      const data = await res.json();
+      if (!Array.isArray(data) || !data.length) { cont.innerHTML = "<em>Sin horarios</em>"; return; }
+
+      cont.innerHTML = data.map(st => {
+        const fecha = new Date(st.fechaHora);
+        const etiqueta =
+          `${fecha.toLocaleDateString("es-CO",{weekday:"short",day:"2-digit",month:"short"})} ` +
+          `${fecha.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})} — ${st.sala}`;
+        return `<div class="horario">${etiqueta}</div>`;
+      }).join("");
+    } catch (e) {
+      console.error(e);
+      cont.innerHTML = "<em>Error cargando horarios</em>";
+    }
   }
 
   async function main() {
     try {
-      const p = new URLSearchParams(location.search);
-      const movieId = p.get("id");
-      if (!movieId) throw new Error("Falta ?id=... en la URL");
+      let movie = null;
+      let movieId = null;
 
-      const [movie, showtimes] = await Promise.all([
-        fetchMovieById(movieId),
-        fetchShowtimes(movieId)
-      ]);
+      // 1) ?id=…
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id");
+      if (id) {
+        movie = await fetchMovieById(id);
+        fillDOM(movie);
+        await loadShowtimes(movie.id);
+        return;
+      }
 
-      fillMovie(movie);
-      renderShowtimes(movie, showtimes);
-    } catch (e) {
-      console.error("[detalles] error:", e);
-      const cont = qs(".detalle-pelicula .info");
-      if (cont) cont.insertAdjacentHTML("beforeend",
-        `<p style="color:#b00020;">No pude cargar los detalles/horarios.</p>`);
+      // 2) #pm=…
+      const pm = parsePM();
+      if (pm && pm.id) {
+        movie = await fetchMovieById(pm.id);
+        fillDOM(movie);
+        await loadShowtimes(movie.id);
+        return;
+      }
+
+      // 3) Fallback: solo meta (sin id) → pintar y buscar id por título
+      if (pm) {
+        fillDOM(pm);
+        movieId = await ensureMovieIdByTitle(pm.titulo || pm.title);
+        if (movieId) await loadShowtimes(movieId);
+        return;
+      }
+
+      throw new Error("Sin id/pm para cargar detalles.");
+    } catch (err) {
+      console.error("[detalles] error:", err);
+      const cont = document.querySelector(".detalle-pelicula .info");
+      if (cont) cont.innerHTML =
+        `<p style="color:#b00020;">No pude cargar los detalles de la película.</p>`;
     }
   }
 
   main();
 })();
+

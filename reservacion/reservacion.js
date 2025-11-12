@@ -1,44 +1,41 @@
-// ===============================
-// Config
-// ===============================
-const API_BASE = "http://localhost:8080";
+// reservacion/reservacion.js
+const API_BASE = Auth.API_BASE;
 const PRECIO_ASIENTO = 8000;
 
-// Helpers
 const $  = (s, ctx=document) => ctx.querySelector(s);
 const $$ = (s, ctx=document) => Array.from(ctx.querySelectorAll(s));
 const money = (v) => `$${Number(v||0).toLocaleString("es-CO")} COP`;
 
-// ===============================
-// 1) META de película desde #pm y detección de movieId
-// ===============================
-function parsePM() {
-  if (location.hash.startsWith("#pm=")) {
+// ========= 1) movieId sólo desde URL =========
+function getMovieIdFromUrl() {
+  const sp = new URLSearchParams(location.search);
+  const id = sp.get("id");
+  if (id) return id;
+
+  // fallback: si alguien vino con #id=123
+  if (location.hash.startsWith("#id=")) {
     try {
       const raw = decodeURIComponent(location.hash.slice(4));
-      const obj = JSON.parse(raw);
       history.replaceState(null, "", location.pathname + location.search);
-      return obj;
+      return raw;
     } catch {}
   }
-  try { return JSON.parse(localStorage.getItem("pendingMovie") || "null"); } catch {}
   return null;
 }
 
-async function ensureMovieId(meta) {
-  if (meta.movieId) return meta.movieId;
-  const res = await fetch(`${API_BASE}/api/movies`);
-  const movies = await res.json();
-  const found = movies.find(m => (m.titulo || "").toLowerCase() === (meta.titulo||"").toLowerCase());
-  return found?.id || null;
+// ========= 2) Cargar meta de la película desde el backend =========
+async function fetchMovieById(id) {
+  const res = await fetch(`${API_BASE}/api/movies/${encodeURIComponent(id)}`);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return await res.json();
 }
 
 function paintMeta(meta) {
-  $("#movieTitle").textContent = meta.titulo || "Película";
+  $("#movieTitle").textContent    = meta.titulo || "Película";
   $("#movieDirector").textContent = meta.director || "—";
-  $("#movieGenres").textContent = meta.generos || "—";
+  $("#movieGenres").textContent   = meta.generos || "—";
   $("#movieDuration").textContent = meta.duracion || "—";
-  if ($("#moviePoster") && meta.poster) $("#moviePoster").src = meta.poster;
+  if (meta.poster) $("#moviePoster").src = meta.poster;
 
   const main = $(".reserva-main");
   if (main && meta.fondo) {
@@ -49,9 +46,7 @@ function paintMeta(meta) {
   }
 }
 
-// ===============================
-// 2) Carga de horarios, asientos y selección
-// ===============================
+// ========= 3) Horarios y asientos =========
 function buildSeatGrid(filas=6, columnas=8) {
   const cont = $("#asientos");
   cont.innerHTML = "";
@@ -76,8 +71,10 @@ function buildSeatGrid(filas=6, columnas=8) {
 async function loadShowtimes(movieId) {
   const wrap = $("#horarios");
   wrap.innerHTML = "<em>Cargando horarios…</em>";
+
   const res = await fetch(`${API_BASE}/api/showtimes?movieId=${encodeURIComponent(movieId)}`);
   if (!res.ok) { wrap.innerHTML = "<em>Error cargando horarios</em>"; return []; }
+
   const data = await res.json();
   if (!Array.isArray(data) || !data.length) { wrap.innerHTML = "<em>Sin horarios</em>"; return []; }
 
@@ -114,11 +111,9 @@ async function selectShowtime(st, btn) {
       if (a.classList.contains("ocupado") || a.dataset.locked === "1") return;
       const code = a.textContent.trim();
       if (a.classList.toggle("seleccionado")) {
-        selectedSeats.add(code);
-        total += PRECIO_ASIENTO;
+        selectedSeats.add(code); total += PRECIO_ASIENTO;
       } else {
-        selectedSeats.delete(code);
-        total -= PRECIO_ASIENTO;
+        selectedSeats.delete(code); total -= PRECIO_ASIENTO;
       }
       updateTotal();
     });
@@ -141,95 +136,93 @@ async function loadSeatsFromBackend(showtimeId, filas=6, columnas=8) {
   });
 }
 
-function findSeatButton(code) {
-  return $$(".asiento").find(b => b.textContent.trim() === code);
-}
+function findSeatButton(code) { return $$(".asiento").find(b => b.textContent.trim() === code); }
+function updateTotal() { $("#btn-total").textContent = money(total); }
 
-function updateTotal() {
-  const btn = $("#btn-total");
-  if (btn) btn.textContent = money(total);
-}
-
-// ===============================
-// 3) Confirmar: HOLD y pasar a comidas
-// ===============================
+// ========= 4) Confirmar (HOLD) y pasar a comidas =========
 async function confirmAndHold() {
+  // Si no hay sesión, mandamos a login y volvemos EXACTAMENTE a esta página con ?id=...
+  const currentUrl = window.location.pathname + window.location.search;
+  if (!Auth.requireLogin(currentUrl)) return; // se va a login y volverá aquí
+
   if (!selectedShowtime || selectedSeats.size === 0) {
-    const mod = $("#modal-error");
-    const msg = $("#mensaje-error");
+    const mod = $("#modal-error"), msg = $("#mensaje-error");
     if (mod && msg) { msg.textContent = "Debes seleccionar un horario y al menos un asiento."; mod.checked = true; }
     else alert("Debes seleccionar un horario y al menos un asiento.");
     return;
   }
 
-  const res = await fetch(`${API_BASE}/api/showtimes/${selectedShowtime.id}/seats/hold`, {
+  // HOLD en backend
+  const res = await Auth.apiFetch(`${API_BASE}/api/showtimes/${selectedShowtime.id}/seats/hold`, {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
     body: JSON.stringify({ seatCodes: Array.from(selectedSeats) })
   });
   if (!res.ok) { alert("No se pudo bloquear los asientos. Intenta de nuevo."); return; }
-  const hold = await res.json();
+  const hold = await res.json(); // {holdId, expiresAt}
 
-  let draft = {};
-  try { draft = JSON.parse(localStorage.getItem("reservaDraft") || "{}"); } catch {}
-  draft.id         = draft.id || ("r_" + Date.now());
-  draft.showtimeId = selectedShowtime.id;
-  draft.holdId     = hold.holdId;
-  draft.holdExp    = hold.expiresAt;
-  draft.asientos   = Array.from(selectedSeats);
-  draft.fecha      = new Date().toLocaleDateString("es-CO");
-  draft.horario    = $(`.btn-horario.seleccionado`)?.textContent?.trim() || "";
-  draft.costos     = { boletas: total, comida: 0, cargo: 0, total };
+  // Guardamos draft mínimo en localStorage (solo para siguiente paso)
+  const draft = {
+    id         : "r_" + Date.now(),
+    movieId    : currentMovieId,
+    showtimeId : selectedShowtime.id,
+    holdId     : hold.holdId,
+    holdExp    : hold.expiresAt,
+    asientos   : Array.from(selectedSeats),
+    fecha      : new Date().toLocaleDateString("es-CO"),
+    horario    : $(`.btn-horario.seleccionado`)?.textContent?.trim() || "",
+    costos     : { boletas: total, comida: 0, cargo: 0, total }
+  };
   localStorage.setItem("reservaDraft", JSON.stringify(draft));
 
-  window.location.href = "reservacioncomida.html";
+  // Vamos a la comida (no necesitamos pasar PM; la orden la completa desde backend)
+  window.location.href = "reservacionComida.html?showtimeId=" + encodeURIComponent(selectedShowtime.id);
 }
 
-// ===============================
-// 4) Cancelar
-// ===============================
+// ========= 5) Cancelar =========
 function wireCancel() {
   const btnSi = $("#btn-si-cancelar");
   if (btnSi) {
     btnSi.addEventListener("click", () => {
       localStorage.removeItem("reservaDraft");
-      localStorage.removeItem("pendingMovie");
     });
   }
 }
 
-// ===============================
-// Init
-// ===============================
+// ========= Init =========
+let currentMovieId = null;
+
 (async function init() {
-  const pm = parsePM() || {};
-  const meta = {
-    movieId : pm.movieId || null,
-    titulo  : pm.titulo || "Película",
-    poster  : pm.poster || "",
-    fondo   : pm.fondo || "",
-    director: pm.director || "",
-    generos : pm.generos || "",
-    duracion: pm.duracion || ""
-  };
-  paintMeta(meta);
+  try {
+    currentMovieId = getMovieIdFromUrl();
+    if (!currentMovieId) {
+      alert("No se indicó la película. Vuelve a la cartelera.");
+      window.location.href = "../cartelera/cartelera.html";
+      return;
+    }
 
-  let draft = {};
-  try { draft = JSON.parse(localStorage.getItem("reservaDraft") || "{}"); } catch {}
-  draft.meta = { ...(draft.meta||{}), ...meta };
-  draft.pelicula = meta.titulo;
-  localStorage.setItem("reservaDraft", JSON.stringify(draft));
+    // Cargar película real desde BD
+    const movie = await fetchMovieById(currentMovieId);
+    // Normaliza meta para pintar
+    const meta = {
+      titulo  : movie.titulo || movie.title || "Película",
+      poster  : movie.poster || movie.caratula || "",
+      fondo   : movie.fondo || movie.poster || "",
+      director: movie.director || "",
+      generos : movie.generos || "",
+      duracion: movie.duracion || ""
+    };
+    paintMeta(meta);
 
-  const movieId = meta.movieId || await ensureMovieId(meta);
-  if (!movieId) {
-    alert("No pude identificar la película. Regresa a cartelera.");
+    // Horarios y grilla base
+    await loadShowtimes(currentMovieId);
+    buildSeatGrid();
+
+    // Botones
+    $("#btn-confirmar")?.addEventListener("click", confirmAndHold);
+    wireCancel();
+  } catch (err) {
+    console.error(err);
+    alert("No pude cargar la reservación. Intenta desde la cartelera.");
     window.location.href = "../cartelera/cartelera.html";
-    return;
   }
-
-  await loadShowtimes(movieId);
-  buildSeatGrid();
-
-  $("#btn-confirmar")?.addEventListener("click", confirmAndHold);
-  wireCancel();
 })();

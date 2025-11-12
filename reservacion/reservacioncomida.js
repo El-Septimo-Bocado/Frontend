@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:8080";
+// reservacion/reservacionComida.js
+const API_BASE = Auth.API_BASE;
 const $  = (s, ctx=document) => ctx.querySelector(s);
 const $$ = (s, ctx=document) => Array.from(ctx.querySelectorAll(s));
 const money = (v) => `$${Number(v||0).toLocaleString("es-CO")} COP`;
@@ -15,7 +16,6 @@ function mapItem(raw){
     imagen: raw.imageUrl || raw.imagenUrl || raw.poster || "",
   };
 }
-
 function cardHTML(it){
   const alt = it.nombre.replace(/"/g,"&quot;");
   const img = it.imagen
@@ -31,11 +31,7 @@ function cardHTML(it){
     </div>
   `;
 }
-
-function actualizarTotal(){
-  $("#btn-total").textContent = money(total);
-}
-
+function actualizarTotal(){ $("#btn-total").textContent = money(total); }
 function wireCards(){
   $$(".card .btn-comprar").forEach(btn=>{
     btn.addEventListener("click", ()=>{
@@ -47,24 +43,21 @@ function wireCards(){
       if (card.classList.contains("seleccionado")) {
         card.classList.remove("seleccionado");
         draft.comidas = (draft.comidas||[]).filter(c => c.reference !== id);
-        total -= precio;
-        btn.textContent = "Agregar";
+        total -= precio; btn.textContent = "Agregar";
       } else {
         card.classList.add("seleccionado");
         draft.comidas = [...(draft.comidas||[]), { reference:id, nombre, precio, qty:1 }];
-        total += precio;
-        btn.textContent = "Quitar";
+        total += precio; btn.textContent = "Quitar";
       }
       actualizarTotal();
     });
   });
 }
-
 async function loadMenu(){
   const grid = $("#menu-grid");
   grid.innerHTML = "<em>Cargando menú…</em>";
   try{
-    const res = await fetch(`${API_BASE}/api/menu`);
+    const res = await Auth.apiFetch(`${API_BASE}/api/menu`);
     if(!res.ok) throw new Error("HTTP "+res.status);
     const data = await res.json();
     const items = (Array.isArray(data)?data:[]).map(mapItem);
@@ -78,44 +71,36 @@ async function loadMenu(){
 }
 
 async function crearOrdenYRedirigir(){
-  // seguridad
+  try { Auth.requireLogin(); } catch { return; }
   if(!(draft?.showtimeId) || !(draft?.holdId) || !(draft?.asientos?.length)) {
-    alert("Falta información de la reservación. Regresa y selecciona horario/asientos.");
+    alert("Falta info de la reservación. Regresa a seleccionar horario/asientos.");
     window.location.href = "reservacion.html";
     return;
   }
-
-  // construir payload items [{reference, qty}]
   const items = (draft.comidas||[]).map(c => ({ reference: c.reference, qty: c.qty||1 }));
 
-  // POST /api/orders
-  const res = await fetch(`${API_BASE}/api/orders`, {
+  const res = await Auth.apiFetch(`${API_BASE}/api/orders`, {
     method:"POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      showtimeId: draft.showtimeId,
-      holdId: draft.holdId,
-      items
-    })
+    body: JSON.stringify({ showtimeId: draft.showtimeId, holdId: draft.holdId, items })
   });
   if(!res.ok){ alert("No pude crear la orden."); return; }
-  const order = await res.json(); // {id,...}
+  const order = await res.json();
 
-  // Pagar (marca SOLD)
-  const resPay = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(order.id)}/pay`, {
+  const resPay = await Auth.apiFetch(`${API_BASE}/api/orders/${encodeURIComponent(order.id)}/pay`, {
     method:"POST",
-    headers: {"Content-Type":"application/json"},
     body: JSON.stringify({ holdId: draft.holdId })
   });
   if(!resPay.ok){ alert("No se pudo confirmar el pago/reserva."); return; }
 
-  // Guardar orderId y saltar a recibo
   draft.orderId = order.id;
   localStorage.setItem("reservaDraft", JSON.stringify(draft));
   window.location.href = "recibo.html";
 }
 
 (async function init(){
+  // aquí sí exigimos login
+  try { Auth.requireLogin(); } catch { return; }
+
   try { draft = JSON.parse(localStorage.getItem("reservaDraft") || "null"); } catch {}
   if(!draft || !draft.showtimeId || !draft.holdId){
     alert("Primero elige horario y asientos.");
@@ -127,12 +112,10 @@ async function crearOrdenYRedirigir(){
   await loadMenu();
 
   $("#btn-continuar")?.addEventListener("click", async ()=>{
-    // recalcular total comida
     const totalComida = (draft.comidas||[]).reduce((s,c)=> s+(c.precio||0)*(c.qty||1),0);
     draft.costos = {
       boletas: Number(draft?.costos?.boletas||0),
-      comida : totalComida,
-      cargo  : 0,
+      comida : totalComida, cargo: 0,
       total  : Number(draft?.costos?.boletas||0) + totalComida
     };
     localStorage.setItem("reservaDraft", JSON.stringify(draft));
