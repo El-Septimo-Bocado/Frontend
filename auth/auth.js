@@ -29,6 +29,16 @@
 
   const isLoggedIn = () => !!getToken();
 
+  // 🔹 NUEVO: helper para rol actual
+  function getRole() {
+    const data = getUser();
+    if (!data) return null;
+
+    // backend responde { token, user: { id, nombre, email, rol } }
+    const u = data.user || data;
+    return (u && typeof u.rol === "string") ? u.rol : null;
+  }
+
   async function apiFetch(url, opts = {}) {
     const headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
     const token = getToken();
@@ -69,6 +79,15 @@
   }
 
   function redirectPostAuth() {
+    // 🔹 PRIORIDAD: si es ADMIN → siempre al panel
+    const role = getRole();
+    if (role === "ADMIN") {
+      localStorage.removeItem(KEYS.RETURN); // limpiamos por si acaso
+      window.location.href = "../admin/admin.html";
+      return;
+    }
+
+    // 🔹 Usuario normal → respeta returnTo o va al inicio
     const destino = localStorage.getItem(KEYS.RETURN) || "../principal/index.html";
     localStorage.removeItem(KEYS.RETURN);
     window.location.href = destino;
@@ -97,6 +116,7 @@
     apiFetch,
     isLoggedIn,
     getUser,
+    getRole,        // 🔹 extra por si lo quieres usar en otros lados
     logout,
     login,
     register,

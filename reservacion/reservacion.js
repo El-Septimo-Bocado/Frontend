@@ -19,6 +19,15 @@
 
     ev.preventDefault();
     ev.stopPropagation();
+
+    // 💥 limpiar todo rastro de la reserva
+    try {
+      localStorage.removeItem("reservaDraft");
+      // Si algún día quieres que también se olvide la peli pendiente:
+      // localStorage.removeItem("pendingMovie");
+    } catch (_) {}
+
+    // 🚪 salir inmediatamente al inicio
     window.location.href = "../principal/index.html";
   }, true); // <<--- capture = true para ganarle a otros listeners
 
