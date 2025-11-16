@@ -111,14 +111,25 @@ async function crearOrdenYRedirigir(){
   actualizarTotal();
   await loadMenu();
 
-  $("#btn-continuar")?.addEventListener("click", async ()=>{
-    const totalComida = (draft.comidas||[]).reduce((s,c)=> s+(c.precio||0)*(c.qty||1),0);
+   $("#btn-continuar")?.addEventListener("click", () => {
+    const totalComida = (draft.comidas || []).reduce(
+      (s, c) => s + (c.precio || 0) * (c.qty || 1),
+      0
+    );
+
+    // Recalculamos costos pero MANTENEMOS la info de la peli, horario y asientos dentro de draft
     draft.costos = {
-      boletas: Number(draft?.costos?.boletas||0),
-      comida : totalComida, cargo: 0,
-      total  : Number(draft?.costos?.boletas||0) + totalComida
+      boletas: Number(draft?.costos?.boletas || 0),
+      comida : totalComida,
+      cargo  : 0,
+      total  : Number(draft?.costos?.boletas || 0) + totalComida
     };
+
+    // Guardamos el draft actualizado (meta, showtimeId, asientos, comidas, costos...)
     localStorage.setItem("reservaDraft", JSON.stringify(draft));
-    await crearOrdenYRedirigir();
+
+    // Vamos directo al recibo; el backend puede venir después,
+    // pero la info de la peli y la comida ya está guardada localmente.
+    window.location.href = "recibo.html";
   });
 })();

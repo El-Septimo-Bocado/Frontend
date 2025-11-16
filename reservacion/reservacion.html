@@ -17,7 +17,7 @@
       <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
       <li><a href="../menu/menu.html">Menu</a></li>
       <li><a href="../eventos/eventos.html">Eventos</a></li>
-      <li><a href="#">Inicia Sesion</a></li>
+      <li><a href="../auth/login.html">Inicia Sesion</a></li>
       <li><a href="../contacto/contacto.html">Contacto</a></li>
     </ul>
   </nav>
@@ -52,7 +52,7 @@
   <section class="reserva-asientos">
     <h3>Pantalla</h3>
     <div id="asientos" class="asientos-grid">
-      <!-- Se genera A1..F8 automáticamente por JS -->
+      <!-- Se genera por JS con filas/columnas del showtime -->
     </div>
 
     <div class="leyenda-asientos">
@@ -66,7 +66,8 @@
   <section class="reserva-pago">
     <p>Boleta: <strong>$8.000</strong></p>
     <div class="botones-reserva">
-      <label for="modal-cancelar" class="btn btn--danger">Cancelar</label>
+      <!-- IMPORTANTE: estos IDs los usa tu JS -->
+      <label for="modal-cancelar" class="btn btn--danger" id="btn-cancelar">Cancelar</label>
       <button id="btn-total" class="btn btn--ghost" type="button">$0 COP</button>
       <button id="btn-confirmar" class="btn btn--primary" type="button">Confirmar</button>
     </div>
@@ -100,6 +101,8 @@
   <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
 </footer>
 
+<!-- ORDEN DE SCRIPTS: Auth primero, luego tu JS -->
+<script src="../auth/auth.js"></script>
 <script src="reservacion.js" defer></script>
 </body>
 </html>

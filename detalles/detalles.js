@@ -1,4 +1,3 @@
-
 (function () {
   const API_BASE = (window.Auth?.API_BASE) || "http://localhost:8080";
 
@@ -7,7 +6,6 @@
   const setAttr = (sel, attr, val) => { const el = qs(sel); if (el && val != null) el.setAttribute(attr, val); };
   const setStyle = (sel, prop, val) => { const el = qs(sel); if (el && val) el.style.setProperty(prop, val); };
 
-  // ⭐ 0..5 → estrellitas (acepta medios)
   function stars(r) {
     const num = (typeof r === "number") ? r : (r ? Number(r) : NaN);
     if (Number.isNaN(num)) return "—";
@@ -36,7 +34,6 @@
     return await res.json();
   }
 
-  // Para cuando venimos sin id pero con título (busca por título)
   async function ensureMovieIdByTitle(title) {
     if (!title) return null;
     const res = await fetch(`${API_BASE}/api/movies`);
@@ -49,44 +46,51 @@
   }
 
   function wireReserveButton(movieMeta) {
-    const btn = document.querySelector(".btn-reservar");
-    if (!btn) return;
+  const btn = document.querySelector(".btn-reservar");
+  if (!btn) return;
 
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      const meta = {
-        movieId:  movieMeta.id || movieMeta.movieId || null,
-        titulo:   movieMeta.titulo || movieMeta.title || "Película",
-        poster:   movieMeta.poster || movieMeta.caratula || "",
-        fondo:    movieMeta.fondo  || "",
-        director: movieMeta.director || "",
-        generos:  movieMeta.generos || "",
-        duracion: movieMeta.duracion || ""
-      };
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
 
-      // recordamos destino + meta para regresar tras login
-      if (window.Auth?.rememberReservation) {
-        Auth.rememberReservation(meta, "../reservacion/reservacion.html");
-      } else {
-        localStorage.setItem("pendingMovie", JSON.stringify(meta));
-        localStorage.setItem("reservacionDestino", "../reservacion/reservacion.html");
+    const meta = {
+      movieId:  movieMeta.id || movieMeta.movieId || null,
+      id:       movieMeta.id || movieMeta.movieId || null,
+      titulo:   movieMeta.titulo || movieMeta.title || "Película",
+      poster:   movieMeta.poster || movieMeta.caratula || "",
+      fondo:    movieMeta.fondo  || "",
+      director: movieMeta.director || "",
+      generos:  movieMeta.generos || "",
+      duracion: movieMeta.duracion || ""
+    };
+
+    // Guardamos SIEMPRE la meta de la peli para la página de reservación
+    try {
+      localStorage.setItem("pendingMovie", JSON.stringify(meta));
+    } catch {}
+
+    const destino = "../reservacion/reservacion.html";
+
+    if (window.Auth) {
+      // Decimos a dónde debe volver después del login
+      if (Auth.setReturnTo) {
+        Auth.setReturnTo(destino);
       }
 
-      // Si ya hay sesión → vamos directo con #pm
-      if (window.Auth?.requireLogin) {
-        try {
-          Auth.requireLogin(() => {
-            const pm = encodeURIComponent(JSON.stringify(meta));
-            window.location.href = `../reservacion/reservacion.html#pm=${pm}`;
-          });
-        } catch { /* redirigido a /auth/login.html */ }
-      } else {
-        // fallback sin módulo Auth
-        const pm = encodeURIComponent(JSON.stringify(meta));
-        window.location.href = `../auth/login.html#pm=${pm}`;
+      try {
+        // Si está logueado => ejecuta callback y va directo a reservación
+        // Si NO lo está => redirige a login y lanza error (lo ignoramos)
+        Auth.requireLogin(() => {
+          window.location.href = destino;
+        });
+      } catch (e) {
+        // Fue redirigido a ../auth/login.html
       }
-    });
-  }
+    } else {
+      // Si por alguna razón no cargó auth.js
+      window.location.href = "../auth/login.html";
+    }
+  });
+}
 
   function fillDOM(m) {
     const titulo   = m.titulo || m.title || "Película";
@@ -141,32 +145,29 @@
 
   async function main() {
     try {
-      let movie = null;
-      let movieId = null;
-
-      // 1) ?id=…
+      // ?id=...
       const params = new URLSearchParams(location.search);
       const id = params.get("id");
       if (id) {
-        movie = await fetchMovieById(id);
+        const movie = await fetchMovieById(id);
         fillDOM(movie);
         await loadShowtimes(movie.id);
         return;
       }
 
-      // 2) #pm=…
+      // #pm=...
       const pm = parsePM();
       if (pm && pm.id) {
-        movie = await fetchMovieById(pm.id);
+        const movie = await fetchMovieById(pm.id);
         fillDOM(movie);
         await loadShowtimes(movie.id);
         return;
       }
 
-      // 3) Fallback: solo meta (sin id) → pintar y buscar id por título
+      // Fallback: sólo meta → pintar y buscar id por título
       if (pm) {
         fillDOM(pm);
-        movieId = await ensureMovieIdByTitle(pm.titulo || pm.title);
+        const movieId = await ensureMovieIdByTitle(pm.titulo || pm.title);
         if (movieId) await loadShowtimes(movieId);
         return;
       }
@@ -182,4 +183,3 @@
 
   main();
 })();
-
