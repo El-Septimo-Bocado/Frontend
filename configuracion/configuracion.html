@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración de Usuario</title>
+  <link rel="stylesheet" href="configuser.css">
+</head>
+<body>
+  <header class="navbar">
+    <a href="../principal/index.html" class="logo">
+      <img src="../iconos/logo.png" alt="El Séptimo Bocado" class="logo-img">
+    </a>
+    <nav>
+      <ul>
+        <li><a href="../principal/index.html">Inicio</a></li>
+        <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+        <li><a href="../menu/menu.html">Menu</a></li>
+        <li><a href="../eventos/eventos.html">Eventos</a></li>
+        <li><a href="../contacto/contacto.html">Contacto</a></li>
+        <li><a href="../login/login.html">Inicia Sesion</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+
+    <section class="panel">
+      <h2>Mi Cuenta</h2>
+
+      <div class="admin-grid">
+
+        <div class="card span-2">
+          <div class="card-header">
+            <h3>Editar Información Personal</h3>
+          </div>
+          
+          <form id="formEditarUsuario" class="admin-form">
+            <div class="form-group">
+              <label for="userNombre">Nombre Completo</label>
+              <input type="text" id="userNombre" placeholder="Tu nombre actual..." required>
+            </div>
+
+            <div class="form-group">
+              <label for="userCorreo">Correo Electrónico</label>
+              <input type="text" id="userCorreo" placeholder="ejemplo@correo.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="userPass">Nueva Contraseña</label>
+              <input type="password" id="userPass" placeholder="Dejar en blanco para no cambiar">
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Sesión</h3>
+          </div>
+          <div class="admin-form">
+            <p class="subtext">
+              ¿Deseas salir de tu cuenta? Tendrás que ingresar tus datos nuevamente.
+            </p>
+            <div class="form-actions">
+              <a href="../login/login.html" class="btn-update">Cerrar Sesión</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card form-eliminar">
+          <div class="card-header">
+            <h3>Zona de Peligro</h3>
+          </div>
+          <form id="formEliminarCuenta" class="admin-form">
+            <p class="subtext">
+              Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, ten cuidado.
+            </p>
+            
+            <div class="form-group">
+              <label for="confirmEliminar">Escribe "ELIMINAR" para confirmar</label>
+              <input type="text" id="confirmEliminar" placeholder="ELIMINAR">
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-primary-light btn-danger">
+                Eliminar Cuenta Permanentemente
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
