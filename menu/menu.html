@@ -18,8 +18,8 @@
         <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
         <li><a href="../menu/menu.html">Menu</a></li>
         <li><a href="../eventos/eventos.html">Eventos</a></li>
-        <li><a href="#">Inicia Sesion</a></li>
         <li><a href="../contacto/contacto.html">Contacto</a></li>
+     <li><a href="../auth/login.html">Inicia Sesion</a></li>
       </ul>
     </nav>
   </header>
@@ -33,20 +33,26 @@
   </section>
 
   <!-- Menú: Platos -->
+  <!-- Menú: Platos -->
   <section class="menu">
     <h2>Platos Estrella</h2>
+    <div id="menu-platos" class="peliculas"></div>
     <div id="menu-platos" class="peliculas"></div>
   </section>
 
   <!-- Menú: Postres -->
+  <!-- Menú: Postres -->
   <section class="menu">
     <h2>Postres y Dulces</h2>
+    <div id="menu-postres" class="peliculas"></div>
     <div id="menu-postres" class="peliculas"></div>
   </section>
 
   <!-- Menú: Bebidas -->
+  <!-- Menú: Bebidas -->
   <section class="menu">
     <h2>Bebidas</h2>
+    <div id="menu-bebidas" class="peliculas"></div>
     <div id="menu-bebidas" class="peliculas"></div>
   </section>
 
@@ -56,6 +62,8 @@
   </footer>
 
   <!-- Script: cargar menú desde el backend -->
+  <script src="../auth/auth.js"></script>
+  <script src="../auth/navbar-session.js"></script>
   <script src="menu.js" defer></script>
 </body>
 </html>
