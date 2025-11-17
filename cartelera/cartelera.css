@@ -1,14 +1,14 @@
-/*Colores*/
+/* Colores base (mismos del index) */
 :root {
-  --color-fondo: #1e1e1e;       /* Fondo gris oscuro*/
-  --color-navbar: #2b1b0f;      /* Marrón oscuro*/
-  --color-acento: #ff9d00;      /* Naranja brillante*/
-  --color-acento-sec: #b22222;  /* Rojo vino*/
-  --color-texto: #ffffff;       /* Texto principal */
-  --color-subtexto: #cccccc;    /* Texto secundario */
+  --color-fondo: #1e1e1e;
+  --color-navbar: #24170c;
+  --color-acento: #ff9d00;
+  --color-acento-sec: #b22222;
+  --color-texto: #ffffff;
+  --color-subtexto: #cccccc;
 }
 
-/*Reset*/
+/* Reset */
 * {
   margin: 0;
   padding: 0;
@@ -16,13 +16,16 @@
 }
 
 body {
-  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
   font-family: Arial, sans-serif;
-  background: var(--color-fondo);
+  background-color: var(--color-fondo);
   color: var(--color-texto);
 }
 
-/* Navbar */
+/* Navbar (igual al index) */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -63,88 +66,130 @@ body {
   color: var(--color-acento);
 }
 
-/* Cartelera */
-.cartelera {
-  padding: 40px 20px;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columnas */
-  gap: 25px;
-  justify-items: center;
+/* Contenedor principal de cartelera */
+.main-cartelera {
+  flex: 1;
 }
 
-.tarjeta {
-  background-color: var(--color-navbar);
-  border: 1px solid var(--color-acento);
-  border-radius: 10px;
-  overflow: hidden;
+/* Sección Cartelera (similar al index) */
+.cartelera {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.cartelera h2 {
+  color: var(--color-acento);
+  margin-bottom: 25px;
   text-align: center;
-  color: var(--color-texto);
-  text-decoration: none;
-  transition: transform 0.3s, box-shadow 0.3s;
-  width: 100%;
-  max-width: 220px;
+}
+
+/* Grid de películas (mismo estilo de index, pero tamaño más fijo) */
+.peliculas {
+  display: grid;
+  /* Tarjetas con ancho fijo aprox. y centradas */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 220px));
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Card de película (copiado/adaptado del index) */
+.card {
+  background: var(--color-navbar);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  border: 1px solid var(--color-acento);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
   position: relative;
 }
 
-.tarjeta:hover {
+.card:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
 }
 
-.tarjeta img {
+/* Imagen tipo poster/CD */
+.card img {
   width: 100%;
-  height: auto;
-  display: block;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: transform 1.2s linear;
 }
 
-.tarjeta h2 {
-  margin: 15px 10px;
-  font-size: 1.1rem;
+/* Placeholder si no hay imagen */
+.placeholder-poster {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* Giro de imagen al pasar el mouse (como en index) */
+.card img:hover {
+  animation: girar-cd 1.2s linear infinite;
+}
+
+@keyframes girar-cd {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.card h3 {
+  margin-bottom: 8px;
+}
+
+.card p {
+  margin-bottom: 12px;
+  color: var(--color-subtexto);
+}
+
+/* Botón "Ver detalles" */
+.card button {
+  background: var(--color-acento);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  color: var(--color-fondo);
+}
+
+.card button:hover {
+  background: var(--color-acento-sec);
   color: var(--color-texto);
 }
 
-.etiqueta {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: var(--color-acento);
-  color: var(--color-fondo);
-  padding: 5px 10px;
-  font-weight: bold;
-  border-radius: 5px;
-  font-size: 0.9rem;
+/* Badge azul de "Próximamente" (mismo del index) */
+.badge-proximamente {
+  display: inline-block;
+  background: #1e88e5;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+  align-self: flex-start;
 }
 
-.etiquetaproximamente {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #74859F;
-  color: var(--color-fondo);
-  padding: 5px 10px;
-  font-weight: bold;
-  border-radius: 5px;
-  font-size: 0.9rem;
-}
-
-
-/* Footer */
+/* Footer pegado al final */
 footer {
   background: var(--color-navbar);
   text-align: center;
   padding: 15px;
-  margin-top: 40px;
   color: var(--color-subtexto);
   font-size: 14px;
-}
-
-/*Para que quede el footer pegado al final de la pagina*/
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-footer {
-  margin-top: auto;
+  margin-top: 40px;
 }
