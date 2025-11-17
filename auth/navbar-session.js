@@ -1,8 +1,10 @@
 // auth/navbar-session.js
 (function () {
-  const USER_CONFIG_URL = "../usuario/configuracion.html"; 
-  // ↳ Cambien esta ruta cuando su compañero tenga lista la pantalla de usuario
 
+  // ✅ RUTA CORRECTA DE LA PÁGINA DE CONFIGURACIÓN
+  const USER_CONFIG_URL = "../configuracion/configuracion.html";
+
+  // ✔️ Ruta correcta del login (esto ya estaba bien)
   const LOGIN_URL = "../auth/login.html";
 
   const qs  = (sel) => document.querySelector(sel);
@@ -20,7 +22,6 @@
       const a = li.querySelector("a");
       if (!a) continue;
       const text = (a.textContent || "").toLowerCase().trim();
-      // Cubrimos: "Inicia Sesion", "Inicia Sesión", "Iniciar sesión", etc.
       if (
         text.includes("inicia sesion") ||
         text.includes("inicia sesión") ||
@@ -50,10 +51,7 @@
 
     const trimmed = String(raw).trim();
     if (!trimmed) return "Mi cuenta";
-
-    // Si tiene espacios, usamos solo el primer nombre
-    const first = trimmed.split(" ")[0];
-    return first || trimmed;
+    return trimmed.split(" ")[0] || trimmed;
   }
 
   function ensureUserLink(navList, user) {
@@ -72,7 +70,6 @@
     const rol = (user.rol || user.role || "").toUpperCase();
     if (rol !== "ADMIN") return;
 
-    // ¿Ya existe un link al admin?
     const existing = Array.from(navList.querySelectorAll("a")).find((a) => {
       const href = (a.getAttribute("href") || "").toLowerCase();
       const text = (a.textContent || "").toLowerCase();
@@ -94,7 +91,6 @@
     const navList = getNavbarList();
     if (!navList) return;
 
-    // Si Auth no existe, solo dejamos el link de "Inicia Sesión" normal
     if (!window.Auth) {
       ensureGuestLoginLink(navList);
       return;
@@ -110,15 +106,11 @@
     const user = data?.user;
 
     if (!user) {
-      // No hay sesión → link de login
       ensureGuestLoginLink(navList);
       return;
     }
 
-    // Hay sesión → mostrar nombre y link a config de usuario
     ensureUserLink(navList, user);
-
-    // Si además es admin → botón Panel Admin
     ensureAdminLink(navList, user);
   }
 
