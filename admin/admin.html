@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador - Gestión</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="../principal/index.html" class="logo">
+      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+    </a>
+    <nav>
+      <ul>
+        <li><a href="../principal/index.html">Inicio</a></li>
+        <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+        <li><a href="../menu/menu.html">Menu</a></li>
+        <li><a href="../eventos/eventos.html">Eventos</a></li>
+        <li><a href="../contacto/contacto.html">Contacto</a></li>
+        <li><a href="../auth/login.html">Inicia Sesion</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <input type="text" placeholder="Buscar películas, comidas o bebidas..." class="input-search-top" />
+      <button class="btn-update">Actualizar</button>
+      <a href="../principal/index.html" class="btn-home">Ir a inicio</a>
+    </header>
+
+    <section class="panel">
+      <h2>Panel de Administración</h2>
+
+      <div class="admin-grid">
+
+        <!-- ===================== -->
+        <!-- CREAR NUEVA PELÍCULA -->
+        <!-- ===================== -->
+        <div class="card form-crear">
+          <div class="card-header">
+            <h3>Crear Nueva Película</h3>
+          </div>
+          <form id="formCrearPelicula" class="admin-form">
+            
+            <div class="form-row">
+              <div class="form-group" style="flex: 2;">
+                <label for="peliculaTitulo">Título</label>
+                <input type="text" id="peliculaTitulo" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="peliculaDuracion">Duración (min)</label>
+                <input type="number" id="peliculaDuracion" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="peliculaClasificacion">Clasificación / Géneros</label>
+                <input type="text" id="peliculaClasificacion" required placeholder="Acción, Aventura, PG-13...">
+              </div>
+              <div class="form-group">
+                <label for="peliculaEstado">Estado</label>
+                <select id="peliculaEstado">
+                  <option value="Activa">Activa</option>
+                  <option value="Proximamente">Próximamente</option>
+                  <option value="Inactiva">Inactiva</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="peliculaReparto">Director</label>
+              <input type="text" id="peliculaReparto" placeholder="Ej: Quentin Tarantino" required>
+            </div>
+
+            <div class="form-group">
+              <label for="peliculaSinopsis">Sinopsis</label>
+              <textarea id="peliculaSinopsis" required rows="4"></textarea>
+            </div>
+
+            <!-- CAMPOS EXTRA PELÍCULA -->
+            <div class="form-group">
+              <label for="peliculaPoster">URL Poster</label>
+              <input type="text" id="peliculaPoster" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+              <label for="peliculaFondo">URL Fondo</label>
+              <input type="text" id="peliculaFondo" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+              <label for="peliculaCaratula">URL Carátula</label>
+              <input type="text" id="peliculaCaratula" placeholder="https://...">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="peliculaRating">Calificación (0.0 a 5.0)</label>
+                <input type="number" step="0.1" min="0" max="5" id="peliculaRating" placeholder="4.5">
+              </div>
+              <div class="form-group">
+                <label for="peliculaTrailer">URL Trailer (opcional)</label>
+                <input type="text" id="peliculaTrailer" placeholder="https://youtube.com/...">
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Agregar Película</button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- ===================== -->
+        <!-- TABLA PELÍCULAS       -->
+        <!-- ===================== -->
+        <div class="card peliculas">
+          <div class="card-header">
+            <h3>Cartelera Registrada</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Duración</th>
+                  <th>Clasif.</th>
+                  <th>Estado</th>
+                  <th>Director</th>
+                </tr>
+              </thead>
+              <tbody id="tablaPeliculas">
+                <tr> 
+                  <td>Batman 2</td> 
+                  <td>120 min</td>
+                  <td>PG-13</td>
+                  <td>Activa</td>
+                  <td>Robert Downey Jr</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================== -->
+        <!-- CREAR ÍTEM MENÚ       -->
+        <!-- ===================== -->
+        <div class="card form-crear">
+          <div class="card-header">
+            <h3>Crear Nuevo Ítem del Menú</h3>
+          </div>
+          <form id="formCrearMenu" class="admin-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="menuSeccion">Sección</label>
+                <select id="menuSeccion">
+                  <!-- Valores: Comida/Postre/Bebida para que el JS los mapee a plato/postre/bebida -->
+                  <option value="Comida">Platos estrella</option>
+                  <option value="Postre">Postres y dulces</option>
+                  <option value="Bebida">Bebidas</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="menuPrecio">Precio</label>
+                <input type="number" id="menuPrecio" required placeholder="$ 0.00">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="menuNombre">Nombre</label>
+              <input type="text" id="menuNombre" required>
+            </div>
+
+            <div class="form-group">
+              <label for="menuDescripcion">Descripción</label>
+              <textarea id="menuDescripcion" required rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="menuImagen">URL Imagen</label>
+              <input type="text" id="menuImagen" placeholder="https://...">
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Agregar al Menú</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===================== -->
+        <!-- TABLA MENÚ            -->
+        <!-- ===================== -->
+        <div class="card menu">
+          <div class="card-header">
+            <h3>Menú Registrado</h3>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Sección</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Precio</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tablaMenu">
+                <tr> 
+                  <td>Platos estrella</td> 
+                  <td>Palomitas Grandes</td>
+                  <td>Palomitas con mantequilla</td>
+                  <td>$ 15.00</td>
+                  <td>Activo</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================== -->
+        <!-- EDITAR ÍTEM MENÚ      -->
+        <!-- ===================== -->
+        <div class="card form-edicion">
+          <div class="card-header">
+            <h3>Editar Ítem del Menú</h3>
+          </div>
+          <form id="formEditarMenu" class="admin-form">
+            <div class="form-group">
+              <label for="selectMenuEditar">Seleccionar Ítem</label>
+              <select id="selectMenuEditar">
+                <option value="">-- Selecciona un item --</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="editMenuNombre">Nombre</label>
+              <input type="text" id="editMenuNombre">
+            </div>
+
+            <div class="form-group">
+              <label for="editMenuDescripcion">Descripción</label>
+              <textarea id="editMenuDescripcion" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="editMenuPrecio">Precio</label>
+              <input type="number" id="editMenuPrecio">
+            </div>
+
+            <div class="form-group">
+              <label for="editMenuImagen">URL Imagen</label>
+              <input type="text" id="editMenuImagen">
+            </div>
+            
+            <div class="form-group">
+              <label>Tipo</label>
+              <div class="radios">
+                <!-- Valores siguen siendo Comida/Postre/Bebida -->
+                <label><input type="radio" name="tipoMenu" value="Comida"> Platos estrella</label>
+                <label><input type="radio" name="tipoMenu" value="Postre"> Postres y dulces</label>
+                <label><input type="radio" name="tipoMenu" value="Bebida"> Bebidas</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btnGuardarMenu" class="btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===================== -->
+        <!-- MARCAR ÍTEM INACTIVO  -->
+        <!-- ===================== -->
+        <div class="card form-eliminar">
+          <div class="card-header">
+            <h3>Marcar Ítem del Menú como Inactivo</h3>
+          </div>
+          <form id="formEliminarMenu" class="admin-form">
+            <div class="form-group">
+              <label for="selectMenuEliminar">Seleccionar Comida/Bebida</label>
+              <select id="selectMenuEliminar">
+                <option value="">-- Selecciona un item --</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="btnEliminarMenu" class="btn-primary-light">
+                Marcar como inactivo
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===================== -->
+        <!-- EDITAR PELÍCULA       -->
+        <!-- ===================== -->
+        <div class="card form-edicion">
+          <div class="card-header">
+            <h3>Editar Película</h3>
+          </div>
+          <form id="formEditarPelicula" class="admin-form">
+            <div class="form-group">
+              <label for="selectPeliculaEditar">Seleccionar Película</label>
+              <select id="selectPeliculaEditar">
+                <option value="">-- Selecciona una película --</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="editTitulo">Título</label>
+              <input type="text" id="editTitulo">
+            </div>
+
+            <div class="form-group">
+              <label for="editDirector">Director</label>
+              <input type="text" id="editDirector">
+            </div>
+
+            <div class="form-group">
+              <label for="editDuracion">Duración (min)</label>
+              <input type="number" id="editDuracion">
+            </div>
+
+            <div class="form-group">
+              <label for="editSinopsis">Sinopsis</label>
+              <textarea id="editSinopsis" rows="3"></textarea>
+            </div>
+
+            <!-- CAMPOS EXTRA EDICIÓN PELÍCULA -->
+            <div class="form-group">
+              <label for="editGeneros">Géneros / Clasificación</label>
+              <input type="text" id="editGeneros" placeholder="Acción, Aventura...">
+            </div>
+
+            <div class="form-group">
+              <label for="editPoster">URL Poster</label>
+              <input type="text" id="editPoster" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+              <label for="editFondo">URL Fondo</label>
+              <input type="text" id="editFondo" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+              <label for="editCaratula">URL Carátula</label>
+              <input type="text" id="editCaratula" placeholder="https://...">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editRating">Calificación (0.0 a 5.0)</label>
+                <input type="number" step="0.1" min="0" max="5" id="editRating">
+              </div>
+              <div class="form-group">
+                <label for="editTrailer">URL Trailer</label>
+                <input type="text" id="editTrailer" placeholder="https://youtube.com/...">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Estado</label>
+              <div class="radios">
+                <label><input type="radio" name="estado" value="Activa"> Activa</label>
+                <label><input type="radio" name="estado" value="Proximamente"> Próximamente</label>
+                <label><input type="radio" name="estado" value="Inactiva"> Inactiva</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" id="btnGuardarPelicula" class="btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===================== -->
+        <!-- MARCAR PELÍCULA INACTIVA -->
+        <!-- ===================== -->
+        <div class="card form-eliminar">
+          <div class="card-header">
+            <h3>Marcar Película como Inactiva</h3>
+          </div>
+          <form id="formEliminarPelicula" class="admin-form">
+            <div class="form-group">
+              <label for="deletePelicula">Seleccionar Película</label>
+              <select id="deletePelicula">
+                <option value="">-- Selecciona una película --</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="btnEliminarPelicula" class="btn-primary-light">
+                Marcar como inactiva
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div> <!-- /admin-grid -->
+    </section>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="../auth/auth.js"></script>
+  <script src="../auth/navbar-session.js"></script>
+  <script src="admin.js" defer></script>
+</body>
+</html>

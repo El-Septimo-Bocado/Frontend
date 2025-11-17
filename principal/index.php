@@ -25,15 +25,14 @@ $estrenos  = $conexion->query("SELECT * FROM peliculas WHERE categoria = 'estren
       <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
     </a>
     <nav>
-      <ul>
-        <li><a href="../principal/index.php">Inicio</a></li>
-        <li><a href="../cartelera/cartelera.php">Cartelera</a></li>
-        <li><a href="../menu/menu.php">Menu</a></li>
-        <li><a href="#">Eventos</a></li>
-        <li><a href="#">Reservas</a></li>
-        <li><a href="#">Inicia Sesion</a></li>
-        <li><a href="#">Contacto</a></li>
-      </ul>
+    <ul>
+      <li><a href="../principal/index.html">Inicio</a></li>
+      <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+      <li><a href="../menu/menu.html">Menu</a></li>
+      <li><a href="../eventos/eventos.html">Eventos</a></li>
+              <li><a href="../login/login.html">Inicia Sesion</a></li>
+      <li><a href="../contacto/contacto.html">Contacto</a></li>
+    </ul>
     </nav>
   </header>
 

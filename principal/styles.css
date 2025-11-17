@@ -262,6 +262,17 @@ body {
   border: 1px solid var(--color-acento);
 }
 
+.badge-proximamente {
+  display: inline-block;
+  background: #1e88e5;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+  align-self: flex-start;
+}
+
 /*Footer*/
 footer {
   background: var(--color-navbar);

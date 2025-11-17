@@ -1,3 +1,5 @@
+html
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,19 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cartelera</title>
   <link rel="stylesheet" href="cartelera.css"/>
-  <style>
-    /* (Opcional) mínimos por si tu CSS no tiene estas clases */
-    .cartelera { max-width: 1100px; margin: 40px auto; padding: 0 16px; }
-    .cartelera-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 20px; }
-    .tarjeta { position: relative; display: block; background: #111; color: #fff; border-radius: 12px; overflow: hidden; text-decoration: none; box-shadow: 0 6px 16px rgba(0,0,0,.2); }
-    .tarjeta img { width: 100%; height: 260px; object-fit: cover; display:block; }
-    .tarjeta h2 { font-size: 1rem; font-weight: 600; padding: 10px 12px 12px; line-height: 1.2; color: #fff; }
-    .etiqueta, .etiquetaproximamente { position: absolute; top: 10px; left: 10px; padding: 6px 10px; font-size: .8rem; border-radius: 999px; font-weight: 700; }
-    .etiqueta { background: #22c55e; color: #052e13; }              /* Estreno */
-    .etiquetaproximamente { background: #f59e0b; color: #3b2502; }  /* Próximamente */
-    .rating { color: #ffd54a; padding: 0 12px 12px; font-size: .95rem; }
-    .placeholder { width:100%; height:260px; background:#222; display:flex; align-items:center; justify-content:center; color:#777; }
-  </style>
 </head>
 <body>
   <!-- Barra de Navegación -->
@@ -31,22 +20,22 @@
         <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
         <li><a href="../menu/menu.html">Menu</a></li>
         <li><a href="../eventos/eventos.html">Eventos</a></li>
-        <li><a href="#">Inicia Sesion</a></li>
         <li><a href="../contacto/contacto.html">Contacto</a></li>
+        <li><a href="../auth/login.html">Inicia Sesion</a></li>
       </ul>
     </nav>
   </header>
 
   <!-- Cartelera -->
-  <div class="cartelera">
-    <h2 style="grid-column:1 / -1; text-align:center; margin-bottom: 30px;">
-      En cartelera y próximamente
-    </h2>
+  <main class="main-cartelera">
+    <section class="cartelera">
+      <h2>En cartelera y próximos estrenos</h2>
 
-    <div id="cartelera-grid" class="cartelera-grid">
-      <!-- Aquí se inyectan las tarjetas -->
-    </div>
-  </div>
+      <div id="cartelera-grid" class="peliculas">
+        <!-- Aquí se inyectan las tarjetas -->
+      </div>
+    </section>
+  </main>
 
   <!-- Footer -->
   <footer>
@@ -58,55 +47,64 @@
     (function () {
       const API = "http://localhost:8080/api/movies";
 
-      // Mapea los campos del backend a lo que usamos en la UI
-      const mapMovie = (m) => ({
-        id: m.id,
-        titulo: m.titulo || m.title || "Película",
-        // Si tienes coverArt (carátula tipo CD) úsalo; si no, cae a poster
-        imagen: m.coverArt || m.poster || "",
-        poster: m.poster || "",
-        fondo: m.fondo || "",
-        director: m.director || "",
-        generos: m.generos || "",
-        duracion: m.duracion || "",
-        rating: typeof m.rating === "number" ? m.rating : null,
-        activo: m.activo !== false // por defecto true si no viene
-      });
+      // Normaliza el objeto película desde el backend
+      const mapMovie = (m) => {
+        const estado = (m.estado || "").toUpperCase(); // ACTIVA / PROXIMAMENTE / INACTIVA / ""
+        return {
+          id: m.id,
+          titulo: m.titulo || m.title || "Película",
+          // prioridad: caratula → poster → vacío
+          imagen: m.caratula || m.poster || "",
+          poster: m.poster || "",
+          fondo: m.fondo || "",
+          director: m.director || "",
+          generos: m.generos || "",
+          duracion: m.duracion || "",
+          rating: (typeof m.rating === "number")
+                    ? m.rating
+                    : (m.rating ? parseFloat(m.rating) : null),
+          estado,
+          activo: m.activo !== false // true si no está borrada
+        };
+      };
 
-      function stars(r) {
-        if (typeof r !== "number") return "—";
-        const full = Math.floor(r);
-        const half = (r - full) >= 0.5 ? 1 : 0;
+      // Rating 0..5 → estrellitas
+      function toFive(r) {
+        if (typeof r !== "number" || Number.isNaN(r)) return null;
+        return Math.max(0, Math.min(5, r));
+      }
+
+      function stars(rVal) {
+        const r = toFive(rVal);
+        if (r == null) return "—";
+        const full  = Math.floor(r);
+        const half  = (r - full) >= 0.5 ? 1 : 0;
         const empty = 5 - full - half;
         return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
       }
 
+      // Tarjeta igual al index, con badge azul si es PROXIMAMENTE
       function cardHTML(movie) {
-        const etiqueta = movie.activo
-          ? `<div class="etiqueta">Estreno</div>`
-          : `<div class="etiquetaproximamente">Próximamente</div>`;
+        const alt = movie.titulo.replace(/"/g, "&quot;");
 
         const img = movie.imagen
-          ? `<img src="${movie.imagen}" alt="${movie.titulo.replace(/"/g,'&quot;')}">`
-          : `<div class="placeholder">Sin imagen</div>`;
+          ? `<img src="${movie.imagen}" alt="${alt}">`
+          : `<div class="placeholder-poster">Sin imagen</div>`;
 
-        // Construye el payload para reservación
-        const pm = encodeURIComponent(JSON.stringify({
-          titulo   : movie.titulo,
-          poster   : movie.poster || movie.imagen,
-          fondo    : movie.fondo,
-          director : movie.director,
-          generos  : movie.generos,
-          duracion : movie.duracion
-        }));
+        const badge = (movie.estado === "PROXIMAMENTE")
+          ? `<span class="badge-proximamente">Próximamente</span>`
+          : "";
 
         return `
-          <a href="../reservas/reservacion.html#pm=${pm}" class="tarjeta">
-            ${etiqueta}
+          <div class="card">
+            ${badge}
             ${img}
-            <h2>${movie.titulo}</h2>
-            <div class="rating">${stars(movie.rating)}</div>
-          </a>
+            <h3>${movie.titulo}</h3>
+            <p>${stars(movie.rating)}</p>
+            <a href="../detalles/detalles.html?id=${movie.id}">
+              <button>Ver Detalles</button>
+            </a>
+          </div>
         `;
       }
 
@@ -115,24 +113,31 @@
         if (!grid) return;
 
         if (!list.length) {
-          grid.innerHTML = `<p style="opacity:.7;">No hay películas para mostrar.</p>`;
+          grid.innerHTML = `<p style="opacity:.7; text-align:center; grid-column:1 / -1;">No hay películas para mostrar.</p>`;
           return;
         }
         grid.innerHTML = list.map(cardHTML).join("");
       }
 
-      fetch(API)
+      fetch(API, { method: "GET" })
         .then(r => {
           if (!r.ok) throw new Error("HTTP " + r.status);
           return r.json();
         })
         .then(data => {
           const movies = Array.isArray(data) ? data.map(mapMovie) : [];
-          // Puedes ordenar si quieres: primero activas (en cartelera), luego próximas
+
+          // Solo mostramos pelis no borradas y con estado ACTIVA o PROXIMAMENTE
+          const visibles = movies.filter(m =>
+            m.activo && (m.estado === "ACTIVA" || m.estado === "PROXIMAMENTE")
+          );
+
+          // Opcional: primero ACTIVA (en cartelera), luego PROXIMAMENTE
           const ordenadas = [
-            ...movies.filter(m => m.activo),
-            ...movies.filter(m => !m.activo)
+            ...visibles.filter(m => m.estado === "ACTIVA"),
+            ...visibles.filter(m => m.estado === "PROXIMAMENTE")
           ];
+
           render(ordenadas);
         })
         .catch(err => {
@@ -140,12 +145,19 @@
           const grid = document.getElementById("cartelera-grid");
           if (grid) {
             grid.innerHTML = `
-              <p style="color:#b00020;">No pude cargar la cartelera desde ${API}</p>
-              <p style="opacity:.7;">Verifica que el backend está corriendo y CORS está habilitado.</p>
+              <p style="color:#b00020; text-align:center; grid-column:1 / -1;">
+                No pude cargar la cartelera desde ${API}
+              </p>
+              <p style="opacity:.7; text-align:center; grid-column:1 / -1;">
+                Verifica que el backend está corriendo.
+              </p>
             `;
           }
         });
     })();
   </script>
+
+  <script src="../auth/auth.js"></script>
+  <script src="../auth/navbar-session.js"></script>
 </body>
 </html>
