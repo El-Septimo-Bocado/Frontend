@@ -1,3 +1,5 @@
+html
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,107 +9,135 @@
   <link rel="stylesheet" href="cartelera.css"/>
 </head>
 <body>
+  <!-- Barra de Navegación -->
+  <header class="navbar">
+    <a href="../principal/index.html" class="logo">
+      <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
+    </a>
+    <nav>
+      <ul>
+        <li><a href="../principal/index.html">Inicio</a></li>
+        <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
+        <li><a href="../menu/menu.html">Menu</a></li>
+        <li><a href="../eventos/eventos.html">Eventos</a></li>
+        <li><a href="../contacto/contacto.html">Contacto</a></li>
+        <li><a href="../auth/login.html">Inicia Sesion</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<header class="navbar">
-  <a href="../principal/index.html" class="logo">
-    <img src="../iconos/logo.png" alt="El Séptimo Bocado">
-  </a>
-  <nav>
-    <ul>
-      <li><a href="../principal/index.html">Inicio</a></li>
-      <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
-      <li><a href="../menu/menu.html">Menu</a></li>
-      <li><a href="../eventos/eventos.html">Eventos</a></li>
-      <li><a href="../contacto/contacto.html">Contacto</a></li>
-      <li><a href="../auth/login.html">Inicia Sesion</a></li>
-    </ul>
-  </nav>
-</header>
+  <!-- Cartelera -->
+  <main class="main-cartelera">
+    <section class="cartelera">
+      <h2>En cartelera y próximos estrenos</h2>
 
-<section class="cartelera">
-  <h2 class="cartelera-titulo">En cartelera y próximamente</h2>
-  <div id="cartelera-grid" class="cartelera-grid"></div>
-</section>
+      <div id="cartelera-grid" class="peliculas">
+        <!-- Aquí se inyectan las tarjetas -->
+      </div>
+    </section>
+  </main>
 
-<footer>
-  <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
-</footer>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
+  </footer>
 
-<script>
-  (function () {
-    const API = "http://localhost:8080/api/movies";
+  <!-- Script: cargar películas desde el backend -->
+  <script>
+    (function () {
+      const API = "http://localhost:8080/api/movies";
 
-    const mapMovie = (m) => ({
-      id: m.id,
-      titulo: m.titulo || m.title || "Película",
-      imagen: m.coverArt || m.poster || "",
-      poster: m.poster || "",
-      fondo: m.fondo || "",
-      director: m.director || "",
-      generos: m.generos || "",
-      duracion: m.duracion || "",
-      rating: typeof m.rating === "number" ? m.rating : null,
-      activo: m.activo !== false
-    });
+      // Normaliza el objeto película desde el backend
+      const mapMovie = (m) => {
+        const estado = (m.estado || "").toUpperCase(); // ACTIVA / PROXIMAMENTE / INACTIVA / ""
+        return {
+          id: m.id,
+          titulo: m.titulo || m.title || "Película",
+          // prioridad: caratula → poster → vacío
+          imagen: m.caratula || m.poster || "",
+          poster: m.poster || "",
+          fondo: m.fondo || "",
+          director: m.director || "",
+          generos: m.generos || "",
+          duracion: m.duracion || "",
+          rating: (typeof m.rating === "number")
+                    ? m.rating
+                    : (m.rating ? parseFloat(m.rating) : null),
+          estado,
+          activo: m.activo !== false // true si no está borrada
+        };
+      };
 
-    function stars(r) {
-      if (typeof r !== "number") return "—";
-      const full = Math.floor(r);
-      const half = (r - full) >= 0.5 ? 1 : 0;
-      const empty = 5 - full - half;
-      return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
-    }
-
-    function cardHTML(movie) {
-      const etiqueta = movie.activo
-        ? `<div class="etiqueta">Estreno</div>`
-        : `<div class="etiquetaproximamente">Próximamente</div>`;
-
-      const img = movie.imagen
-        ? `<img src="${movie.imagen}" alt="${movie.titulo.replace(/"/g,'&quot;')}">`
-        : `<div class="placeholder">Sin imagen</div>`;
-
-      const pm = encodeURIComponent(JSON.stringify({
-        titulo   : movie.titulo,
-        poster   : movie.poster || movie.imagen,
-        fondo    : movie.fondo,
-        director : movie.director,
-        generos  : movie.generos,
-        duracion : movie.duracion
-      }));
-
-      return `
-        <a href="../reservas/reservacion.html#pm=${pm}" class="tarjeta">
-          ${etiqueta}
-          ${img}
-          <h2>${movie.titulo}</h2>
-          <div class="rating">${stars(movie.rating)}</div>
-        </a>
-      `;
-    }
-
-    function render(list) {
-      const grid = document.getElementById("cartelera-grid");
-      if (!grid) return;
-      if (!list.length) {
-        grid.innerHTML = `<p class="msg-vacio">No hay películas para mostrar.</p>`;
-        return;
+      // Rating 0..5 → estrellitas
+      function toFive(r) {
+        if (typeof r !== "number" || Number.isNaN(r)) return null;
+        return Math.max(0, Math.min(5, r));
       }
-      grid.innerHTML = list.map(cardHTML).join("");
-    }
 
-      fetch(API)
+      function stars(rVal) {
+        const r = toFive(rVal);
+        if (r == null) return "—";
+        const full  = Math.floor(r);
+        const half  = (r - full) >= 0.5 ? 1 : 0;
+        const empty = 5 - full - half;
+        return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
+      }
+
+      // Tarjeta igual al index, con badge azul si es PROXIMAMENTE
+      function cardHTML(movie) {
+        const alt = movie.titulo.replace(/"/g, "&quot;");
+
+        const img = movie.imagen
+          ? `<img src="${movie.imagen}" alt="${alt}">`
+          : `<div class="placeholder-poster">Sin imagen</div>`;
+
+        const badge = (movie.estado === "PROXIMAMENTE")
+          ? `<span class="badge-proximamente">Próximamente</span>`
+          : "";
+
+        return `
+          <div class="card">
+            ${badge}
+            ${img}
+            <h3>${movie.titulo}</h3>
+            <p>${stars(movie.rating)}</p>
+            <a href="../detalles/detalles.html?id=${movie.id}">
+              <button>Ver Detalles</button>
+            </a>
+          </div>
+        `;
+      }
+
+      function render(list) {
+        const grid = document.getElementById("cartelera-grid");
+        if (!grid) return;
+
+        if (!list.length) {
+          grid.innerHTML = `<p style="opacity:.7; text-align:center; grid-column:1 / -1;">No hay películas para mostrar.</p>`;
+          return;
+        }
+        grid.innerHTML = list.map(cardHTML).join("");
+      }
+
+      fetch(API, { method: "GET" })
         .then(r => {
           if (!r.ok) throw new Error("HTTP " + r.status);
           return r.json();
         })
         .then(data => {
           const movies = Array.isArray(data) ? data.map(mapMovie) : [];
-          // Puedes ordenar si quieres: primero activas (en cartelera), luego próximas
+
+          // Solo mostramos pelis no borradas y con estado ACTIVA o PROXIMAMENTE
+          const visibles = movies.filter(m =>
+            m.activo && (m.estado === "ACTIVA" || m.estado === "PROXIMAMENTE")
+          );
+
+          // Opcional: primero ACTIVA (en cartelera), luego PROXIMAMENTE
           const ordenadas = [
-            ...movies.filter(m => m.activo),
-            ...movies.filter(m => !m.activo)
+            ...visibles.filter(m => m.estado === "ACTIVA"),
+            ...visibles.filter(m => m.estado === "PROXIMAMENTE")
           ];
+
           render(ordenadas);
         })
         .catch(err => {
@@ -115,14 +145,19 @@
           const grid = document.getElementById("cartelera-grid");
           if (grid) {
             grid.innerHTML = `
-              <p style="color:#b00020;">No pude cargar la cartelera desde ${API}</p>
-              <p style="opacity:.7;">Verifica que el backend está corriendo y CORS está habilitado.</p>
+              <p style="color:#b00020; text-align:center; grid-column:1 / -1;">
+                No pude cargar la cartelera desde ${API}
+              </p>
+              <p style="opacity:.7; text-align:center; grid-column:1 / -1;">
+                Verifica que el backend está corriendo.
+              </p>
             `;
           }
         });
     })();
   </script>
+
   <script src="../auth/auth.js"></script>
-<script src="../auth/navbar-session.js"></script>
+  <script src="../auth/navbar-session.js"></script>
 </body>
 </html>
