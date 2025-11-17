@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="estreno.css" />
 </head>
 <body>
-  <!-- Barra de Navegacion -->
+  <!-- Barra de Navegación -->
   <header class="navbar">
     <a href="../principal/index.html" class="logo">
       <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
@@ -18,8 +18,8 @@
         <li><a href="../cartelera/cartelera.html">Cartelera</a></li>
         <li><a href="../menu/menu.html">Menu</a></li>
         <li><a href="../eventos/eventos.html">Eventos</a></li>
-        <li><a href="../login/login.html">Inicia Sesión</a></li>
         <li><a href="../contacto/contacto.html">Contacto</a></li>
+      <li><a href="../auth/login.html">Inicia Sesion</a></li>
       </ul>
     </nav>
   </header>
@@ -42,41 +42,39 @@
         <p><strong>Estado:</strong> <span id="estado">—</span></p>
       </div>
 
-      <!-- Botón reservar: si no hay sesión, que te lleve al login y de ahí continúan -->
-      <a id="btn-reservar"
-         href="../login/login.html"
-         class="btn-reservar">
+      <!-- Botón reservar (sin href para no romper el flujo) -->
+      <a id="btn-reservar" class="btn-reservar" href="#">
         🎟️ Reservar Boletos
       </a>
     </div>
   </main>
 
-  <!-- Horarios (placeholder estático por ahora, luego lo conectan a /api/showtimes?movieId=...) -->
+  <!-- Horarios -->
   <section class="horarios">
     <h2>Horarios Disponibles</h2>
-    <div id="horarios-grid" class="horarios-grid">
-      <!-- se llena por JS si quieres; por ahora dejamos vacío o estático -->
-    </div>
+    <div id="horarios-grid" class="horarios-grid"></div>
   </section>
 
-  <!-- Trailer (opcional: se oculta si no hay URL) -->
+  <!-- Trailer (opcional) -->
   <section id="trailer-wrap" style="display:none; margin-top:20px;">
     <iframe id="trailer-iframe" width="100%" height="400" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
   </section>
 
-  <!-- Reseñas (estático de demo) -->
+  <!-- Reseñas (demo) -->
   <section class="reseñas">
     <h2>Reseñas de Usuarios</h2>
     <div class="reseña"><p><strong>Mago:</strong> ⭐⭐⭐⭐⭐ “Buenísima.”</p></div>
   </section>
 
-  <!-- Footer -->
   <footer>
     <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
   </footer>
 
+  <!-- IMPORTANTE: primero auth y luego el js de detalles -->
+  <script src="../auth/auth.js"></script>
+  <script src="../auth/navbar-session.js"></script>
   <script src="detalles.js"></script>
 </body>
 </html>
