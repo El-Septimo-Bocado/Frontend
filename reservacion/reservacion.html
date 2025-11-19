@@ -1,19 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reservación</title>
-  <link rel="stylesheet" href="reservacion.css"/>
   <link rel="stylesheet" href="reservacion.css"/>
 </head>
 <body>
-<header class="navbar">
-  <a href="../principal/index.html" class="logo">
-    <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
-  </a>
 <header class="navbar">
   <a href="../principal/index.html" class="logo">
     <img src="../iconos/logo.png" alt="El Séptimo Bocado" style="height:70px;">
@@ -25,7 +19,7 @@
       <li><a href="../menu/menu.html">Menu</a></li>
       <li><a href="../eventos/eventos.html">Eventos</a></li>
       <li><a href="../contacto/contacto.html">Contacto</a></li>
-      <li><a href="../auth/login.html">Inicia Sesion</a></li>
+      <li><a href="../login/login.html">Inicia Sesion</a></li>
     </ul>
   </nav>
 </header>
@@ -43,30 +37,7 @@
       <p><strong>Duración:</strong> <span id="movieDuration"></span></p>
     </div>
   </section>
-<main class="reserva-main">
-  <!-- Info de película -->
-  <section class="reserva-info">
-    <div class="reserva-poster">
-      <img id="moviePoster" src="" alt="Poster">
-    </div>
-    <div class="reserva-detalles">
-      <h2 id="movieTitle">Título</h2>
-      <p><strong>Director:</strong> <span id="movieDirector"></span></p>
-      <p><strong>Géneros:</strong> <span id="movieGenres"></span></p>
-      <p><strong>Duración:</strong> <span id="movieDuration"></span></p>
-    </div>
-  </section>
 
-  <!-- Horarios -->
-  <section class="reserva-asientos">
-    <h2>Selecciona tu horario y asiento</h2>
-    <div class="reserva-horarios">
-      <h3>Selecciona un horario:</h3>
-      <div id="horarios" class="botones-horario">
-        <!-- Se pinta con JS -->
-      </div>
-    </div>
-  </section>
   <!-- Horarios -->
   <section class="reserva-asientos">
     <h2>Selecciona tu horario y asiento</h2>
@@ -85,12 +56,6 @@
       <!-- Se genera por JS con filas/columnas del showtime -->
     </div>
 
-    <div class="leyenda-asientos">
-      <span><button class="asiento ocupado"></button> Ocupado</span>
-      <span><button class="asiento seleccionado"></button> Seleccionado</span>
-      <span><button class="asiento"></button> Disponible</span>
-    </div>
-  </section>
     <div class="leyenda-asientos">
       <span><button class="asiento ocupado"></button> Ocupado</span>
       <span><button class="asiento seleccionado"></button> Seleccionado</span>
@@ -121,17 +86,6 @@
     </div>
   </div>
 </div>
-<!-- Modales -->
-<input type="checkbox" id="modal-cancelar" class="modal-toggle" hidden>
-<div class="modal modal-cancelar">
-  <div class="modal-content">
-    <p>¿Estás seguro que deseas cancelar?</p>
-    <div class="modal-buttons">
-      <label for="modal-cancelar" class="btn-no">No</label>
-      <a href="../principal/index.html" class="btn-si" id="btn-si-cancelar">Sí</a>
-    </div>
-  </div>
-</div>
 
 <input type="checkbox" id="modal-error" class="modal-toggle" hidden>
 <div class="modal modal-error">
@@ -143,20 +97,7 @@
     </div>
   </div>
 </div>
-<input type="checkbox" id="modal-error" class="modal-toggle" hidden>
-<div class="modal modal-error">
-  <div class="modal-content">
-    <h2>⚠️ Error en la reservación</h2>
-    <p id="mensaje-error">Debes seleccionar un horario y al menos un asiento.</p>
-    <div class="modal-buttons">
-      <label for="modal-error" class="btn-no">Cerrar</label>
-    </div>
-  </div>
-</div>
 
-<footer>
-  <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
-</footer>
 <footer>
   <p>&copy; 2025 El Séptimo Bocado. Todos los derechos reservados.</p>
 </footer>
